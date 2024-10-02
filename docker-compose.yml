@@ -1,0 +1,10 @@
+﻿version: '3.8'
+
+services:
+  webapi:
+    image: webapi:latest
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    ports:
+      - "9090:9090"
