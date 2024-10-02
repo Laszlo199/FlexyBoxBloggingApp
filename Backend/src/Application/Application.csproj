@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="IServices\" />
+    <Folder Include="Dtos\BlogPostDtos\" />
+    <Folder Include="Dtos\UserDtos\" />
   </ItemGroup>
 
 </Project>
