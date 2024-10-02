@@ -1,6 +1,8 @@
-﻿namespace Domain.Services
+﻿using Application.IServices;
+
+namespace Domain.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Domain.Services
+﻿using Application.IServices;
+
+namespace Domain.Services
 {
-    public class BlogPostService
+    public class BlogPostService : IBlogPostService
     {
     }
 }

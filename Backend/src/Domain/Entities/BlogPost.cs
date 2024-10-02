@@ -8,6 +8,5 @@
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
         public int AuthorId { get; set; }
-
     }
 }
