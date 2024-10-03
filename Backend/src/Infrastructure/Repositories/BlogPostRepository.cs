@@ -5,27 +5,27 @@ namespace Infrastructure.Repositories
 {
     public class BlogPostRepository : IBlogPostRepository
     {
-        public Task<BlogPostModel> Create(BlogPostModel blogPost)
+        public async Task<BlogPostModel> Create(BlogPostModel blogPost)
         {
             throw new NotImplementedException();
         }
 
-        public Task<BlogPostModel> Delete(int id)
+        public async Task<BlogPostModel> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<BlogPostModel>> GetAll()
+        public async Task<List<BlogPostModel>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<BlogPostModel> GetById(int id)
+        public async Task<BlogPostModel> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<BlogPostModel> Update(BlogPostModel blogPost)
+        public async Task<BlogPostModel> Update(BlogPostModel blogPost)
         {
             throw new NotImplementedException();
         }
