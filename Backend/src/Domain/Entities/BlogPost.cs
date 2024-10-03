@@ -9,6 +9,6 @@
         public DateTime LastUpdatedAt { get; set; }
         public int AuthorId { get; set; }
         public User User { get; set; }
-        public ICollection<Category> Categories { get; set; } = new List<Category>();
+        public ICollection<BlogPostCategory> BlogPostCategories { get; set; } = new List<BlogPostCategory>();
     }
 }
