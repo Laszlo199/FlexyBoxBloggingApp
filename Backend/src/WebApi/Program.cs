@@ -1,3 +1,5 @@
+using Application.IServices;
+using Domain.Services;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,8 +12,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Application
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
+//builder.Services.AddScoped<IUserService, UserService>();
+
+//Security
+//Db
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+       sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 var app = builder.Build();
 
