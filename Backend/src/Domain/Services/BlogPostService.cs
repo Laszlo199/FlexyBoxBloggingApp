@@ -1,33 +1,40 @@
 ﻿using Application.IServices;
 using Application.Models;
+using Domain.IRepositories;
 
 namespace Domain.Services
 {
     public class BlogPostService : IBlogPostService
     {
-        public Task<BlogPostModel> CreateBlogPost(BlogPostModel blogPost)
+        private readonly IBlogPostRepository _blogPostRepository;
+
+        public BlogPostService(IBlogPostRepository blogPostRepository)
         {
-            throw new NotImplementedException();
+            _blogPostRepository = blogPostRepository;
+        }
+        public async Task<BlogPostModel> CreateBlogPost(BlogPostModel blogPost)
+        {
+            return await _blogPostRepository.Create(blogPost);
         }
 
-        public Task<BlogPostModel> DeleteBlogPost(int id)
+        public async Task<bool> DeleteBlogPost(int id)
         {
-            throw new NotImplementedException();
+            return await _blogPostRepository.Delete(id);
         }
 
-        public Task<List<BlogPostModel>> GetAllBlogPosts()
+        public async Task<List<BlogPostModel>> GetAllBlogPosts()
         {
-            throw new NotImplementedException();
+            return await _blogPostRepository.GetAll();
         }
 
-        public Task<BlogPostModel> GetBlogPostById(int id)
+        public async Task<BlogPostModel> GetBlogPostById(int id)
         {
-            throw new NotImplementedException();
+            return await _blogPostRepository.GetById(id);
         }
 
-        public Task<BlogPostModel> UpdateBlogPost(BlogPostModel blogPost)
+        public async Task<BlogPostModel> UpdateBlogPost(BlogPostModel blogPost)
         {
-            throw new NotImplementedException();
+            return await _blogPostRepository.Update(blogPost);
         }
     }
 }

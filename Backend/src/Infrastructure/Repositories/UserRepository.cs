@@ -5,27 +5,32 @@ namespace Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<UserModel> Create(UserModel user)
+        private readonly AppDbContext _ctx;
+
+        public UserRepository(AppDbContext ctx) {
+            _ctx = ctx;
+        }
+        public async Task<UserModel> Create(UserModel user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserModel> Delete(int id)
+        public async Task<UserModel> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<UserModel>> GetAll()
+        public async Task<List<UserModel>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserModel> GetById(int id)
+        public async Task<UserModel> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserModel> Update(UserModel user)
+        public async Task<UserModel> Update(UserModel user)
         {
             throw new NotImplementedException();
         }

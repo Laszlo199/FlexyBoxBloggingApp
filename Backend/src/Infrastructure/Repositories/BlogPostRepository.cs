@@ -1,33 +1,91 @@
 ﻿using Application.Models;
+using Domain.Entities;
 using Domain.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class BlogPostRepository : IBlogPostRepository
     {
-        public async Task<BlogPostModel> Create(BlogPostModel blogPost)
+        private readonly AppDbContext _ctx;
+
+        public BlogPostRepository(AppDbContext ctx)
         {
-            throw new NotImplementedException();
+            _ctx = ctx;
         }
 
-        public async Task<BlogPostModel> Delete(int id)
+        public async Task<BlogPostModel> Create(BlogPostModel blogPost)
         {
-            throw new NotImplementedException();
+            var newBlogPost = new BlogPost
+            {
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                CreatedAt = DateTime.UtcNow,
+                AuthorId = blogPost.AuthorId
+            };
+            await _ctx.AddAsync(newBlogPost);
+            await _ctx.SaveChangesAsync();
+            return blogPost;
+
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            var blogPost = await _ctx.blogPosts.FirstOrDefaultAsync(bp => bp.Id == id);
+            if (blogPost != null)
+            {
+                _ctx.blogPosts.Remove(blogPost);
+                await _ctx.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<List<BlogPostModel>> GetAll()
         {
-            throw new NotImplementedException();
+            var blogPosts = await _ctx.blogPosts
+                .Select(bp => new BlogPostModel
+                {
+                    Id = bp.Id,
+                    Title = bp.Title,
+                    Content = bp.Content,
+                    CreatedAt = bp.CreatedAt,
+                    LastUpdatedAt = bp.LastUpdatedAt,
+                    AuthorId = bp.AuthorId
+                }).ToListAsync();
+            return blogPosts;
         }
 
         public async Task<BlogPostModel> GetById(int id)
         {
-            throw new NotImplementedException();
+            var blogPost = await _ctx.blogPosts
+                .Where(bp => bp.Id == id)
+                .Select(bp => new BlogPostModel
+                {
+                    Id = bp.Id,
+                    Title = bp.Title,
+                    Content = bp.Content,
+                    CreatedAt = bp.CreatedAt,
+                    LastUpdatedAt = bp.LastUpdatedAt,
+                    AuthorId = bp.AuthorId
+                }).FirstOrDefaultAsync();
+            return blogPost;
+
         }
 
         public async Task<BlogPostModel> Update(BlogPostModel blogPost)
         {
-            throw new NotImplementedException();
+            var existingBlogPost = await _ctx.blogPosts.FirstOrDefaultAsync(bp => bp.Id == blogPost.Id);
+            if (existingBlogPost != null)
+            {
+                existingBlogPost.Title = blogPost.Title;
+                existingBlogPost.Content = blogPost.Content;
+                existingBlogPost.LastUpdatedAt = DateTime.UtcNow;
+
+                await _ctx.SaveChangesAsync();
+                return blogPost;
+            }
+            return null;
         }
     }
 }
