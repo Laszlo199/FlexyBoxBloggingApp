@@ -17,11 +17,6 @@ namespace Domain.Services
             return await _userRepository.Create(user);
         }
 
-        public async Task<bool> DeleteUser(int id)
-        {
-            return await _userRepository.Delete(id);
-        }
-
         public async Task<List<UserModel>> GetAllUsers()
         {
             return await _userRepository.GetAll();
@@ -30,11 +25,6 @@ namespace Domain.Services
         public async Task<UserModel> GetUserById(int id)
         {
             return await _userRepository.GetById(id);
-        }
-
-        public async Task<UserModel> UpdateUser(UserModel user)
-        {
-            return await _userRepository.Update(user);
         }
     }
 }

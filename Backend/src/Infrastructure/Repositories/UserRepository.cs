@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories
         {
             _ctx = ctx;
         }
+
         public async Task<UserModel> Create(UserModel user)
         {
             var newUser = new User
@@ -24,18 +25,6 @@ namespace Infrastructure.Repositories
             await _ctx.AddAsync(newUser);
             await _ctx.SaveChangesAsync();
             return user;
-        }
-
-        public async Task<bool> Delete(int id)
-        {
-            var user = await _ctx.users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user != null)
-            {
-                _ctx.users.Remove(user);
-                await _ctx.SaveChangesAsync();
-                return true;
-            }
-            return false;
         }
 
         public async Task<List<UserModel>> GetAll()
@@ -66,11 +55,6 @@ namespace Infrastructure.Repositories
                 Email = user.Email,
                 CreatedAt = user.CreatedAt
             };
-        }
-
-        public async Task<UserModel> Update(UserModel user)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -6,5 +6,7 @@ namespace WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        //login
+        //register
     }
 }
