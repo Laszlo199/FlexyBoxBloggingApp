@@ -23,7 +23,7 @@ namespace WebApi.Controllers
             return Ok(categories);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetById(int id)
         {
             var category = await _categoryService.GetCategoryById(id);

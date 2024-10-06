@@ -23,7 +23,7 @@ namespace WebApi.Controllers
             return Ok(users);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(int id)
         {
             var user = await _userService.GetUserById(id);
