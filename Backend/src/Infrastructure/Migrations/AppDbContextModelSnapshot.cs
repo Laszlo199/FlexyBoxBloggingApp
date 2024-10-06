@@ -51,7 +51,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("blogPosts");
+                    b.ToTable("blogPosts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.BlogPostCategory", b =>
@@ -66,7 +66,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("BlogPostCategories");
+                    b.ToTable("BlogPostCategories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
@@ -83,7 +83,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("categories");
+                    b.ToTable("categories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -115,7 +115,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.BlogPost", b =>

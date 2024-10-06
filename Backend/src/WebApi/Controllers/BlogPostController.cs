@@ -23,50 +23,35 @@ namespace WebApi.Controllers
         public async Task<ActionResult<List<BlogPostDto>>> GetAll()
         {
             var blogPosts = await _blogPostService.GetAllBlogPosts();
-            var blogPostDtos = _mapper.Map<List<BlogPostDto>>(blogPosts);
 
-            return Ok(blogPostDtos);
+            return Ok(blogPosts);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogPostDto>> GetById(int id)
         {
             var blogPost = await _blogPostService.GetBlogPostById(id);
-            if (blogPost == null)
-            {
-                return NotFound();
-            }
-            var blogPostDto = _mapper.Map<BlogPostDto>(blogPost);
-            return Ok(blogPostDto);
+
+            return Ok(blogPost);
         }
 
         [HttpPost]
-        public async Task<ActionResult<BlogPostDto>> Create([FromBody] BlogPostDto blogPostDto)
+        public async Task<ActionResult<BlogPostDto>> Create([FromBody] CreateBlogPostDto dto)
         {
-            var blogPostModel = _mapper.Map<BlogPostModel>(blogPostDto);
+            var blogPostModel = _mapper.Map<BlogPostModel>(dto);
             var createdBlogPost = await _blogPostService.CreateBlogPost(blogPostModel);
-            var createdBlogPostDto = _mapper.Map<BlogPostDto>(createdBlogPost);
+            var createdDto = _mapper.Map<CreateBlogPostDto>(createdBlogPost);
 
             return CreatedAtAction(nameof(GetById), new { id = createdBlogPost.Id }, createdBlogPost);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BlogPostDto>> Update([FromBody] int id, BlogPostDto blogPostDto)
+        public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
         {
-            if (id != blogPostDto.Id)
-            {
-                return BadRequest();
-            }
-            var blogPost = _mapper.Map<BlogPostModel>(blogPostDto);
+            var blogPost = _mapper.Map<BlogPostModel>(dto);
             var updatedBlogPost = await _blogPostService.UpdateBlogPost(blogPost);
 
-            if (updatedBlogPost == null)
-            {
-                return NotFound();
-            }
-            var updatedBlogPostDto = _mapper.Map<BlogPostDto>(updatedBlogPost);
-
-            return Ok(updatedBlogPostDto);
+            return Ok(_mapper.Map<BlogPostDto>(updatedBlogPost));
         }
 
         [HttpDelete("{id}")]

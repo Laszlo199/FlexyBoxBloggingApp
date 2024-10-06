@@ -8,7 +8,9 @@ namespace Application.Mappers
     {
         public DtoMappers()
         {
-            CreateMap<BlogPostModel, BlogPostDto>().ReverseMap();
+            CreateMap<BlogPostDto, BlogPostModel>().ReverseMap();
+            CreateMap<CreateBlogPostDto, BlogPostModel>().ReverseMap();
+            CreateMap<UpdateBlogPostDto, BlogPostModel>().ReverseMap();
         }
     }
 }

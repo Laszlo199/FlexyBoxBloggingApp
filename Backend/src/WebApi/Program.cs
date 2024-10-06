@@ -1,8 +1,7 @@
-using Application.IServices;
 using Application.Mappers;
-using Domain.Services;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Application
-builder.Services.AddScoped<IBlogPostService, BlogPostService>();
-//builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddServicesAndRepositories();
 builder.Services.AddAutoMapper(typeof(DtoMappers));
-
 //Security
 //Db
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -25,7 +22,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
        sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

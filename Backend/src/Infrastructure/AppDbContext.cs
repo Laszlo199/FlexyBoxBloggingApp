@@ -11,7 +11,7 @@ namespace Infrastructure
 
         public DbSet<BlogPost> blogPosts { get; set; }
         public DbSet<Category> categories { get; set; }
-        public DbSet<BlogPostCategory> blogPostCategories { get; set; }
+        public DbSet<BlogPostCategory> BlogPostCategories { get; set; }
         public DbSet<User> users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +33,8 @@ namespace Infrastructure
                 .HasOne(bc => bc.Category)
                 .WithMany(c => c.BlogPostCategories)
                 .HasForeignKey(bc => bc.CategoryId);
+
+            
         }
     }
 }

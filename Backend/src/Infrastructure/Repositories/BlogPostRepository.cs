@@ -16,15 +16,28 @@ namespace Infrastructure.Repositories
 
         public async Task<BlogPostModel> Create(BlogPostModel blogPost)
         {
-            var newBlogPost = new BlogPost
+            var newPost = new BlogPost
             {
                 Title = blogPost.Title,
                 Content = blogPost.Content,
                 CreatedAt = DateTime.UtcNow,
                 AuthorId = blogPost.AuthorId
             };
-            await _ctx.AddAsync(newBlogPost);
+
+            await _ctx.blogPosts.AddAsync(newPost);
             await _ctx.SaveChangesAsync();
+
+            var blogPostCategories = blogPost.CategoryIds.Select(categoryId => new BlogPostCategory
+            {
+                BlogPostId = newPost.Id,
+                CategoryId = categoryId
+            }).ToList();
+
+            await _ctx.BlogPostCategories.AddRangeAsync(blogPostCategories);
+            await _ctx.SaveChangesAsync();
+
+            blogPost.Id = newPost.Id;
+
             return blogPost;
 
         }
