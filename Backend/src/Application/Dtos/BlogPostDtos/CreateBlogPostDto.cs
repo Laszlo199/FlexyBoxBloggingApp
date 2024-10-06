@@ -1,12 +1,9 @@
-﻿namespace Application.Models
+﻿namespace Application.Dtos.BlogPostDtos
 {
-    public class BlogPostModel
+    public class CreateBlogPostDto
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? LastUpdatedAt { get; set; }
         public int AuthorId { get; set; }
         public List<int> CategoryIds { get; set; } = new List<int>();
     }

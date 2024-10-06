@@ -1,33 +1,60 @@
 ﻿using Application.Models;
+using Domain.Entities;
 using Domain.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<UserModel> Create(UserModel user)
+        private readonly AppDbContext _ctx;
+
+        public UserRepository(AppDbContext ctx)
         {
-            throw new NotImplementedException();
+            _ctx = ctx;
         }
 
-        public Task<UserModel> Delete(int id)
+        public async Task<UserModel> Create(UserModel user)
         {
-            throw new NotImplementedException();
+            var newUser = new User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = DateTime.UtcNow,
+            };
+            await _ctx.AddAsync(newUser);
+            await _ctx.SaveChangesAsync();
+            return user;
         }
 
-        public Task<List<UserModel>> GetAll()
+        public async Task<List<UserModel>> GetAll()
         {
-            throw new NotImplementedException();
+            var users = await _ctx.users
+                .Select(u => new UserModel
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    PasswordHash = u.PasswordHash,
+                    PasswordSalt = u.PasswordSalt,
+                    Email = u.Email,
+                    CreatedAt = u.CreatedAt
+                }).ToListAsync();
+            return users;
         }
 
-        public Task<UserModel> GetById(int id)
+        public async Task<UserModel?> GetById(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<UserModel> Update(UserModel user)
-        {
-            throw new NotImplementedException();
+            var user = await _ctx.users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null) return null;
+            return new UserModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                PasswordSalt = user.PasswordSalt,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt
+            };
         }
     }
 }

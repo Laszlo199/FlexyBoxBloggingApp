@@ -8,7 +8,7 @@ namespace Application.IServices
         Task<List<BlogPostModel>> GetAllBlogPosts();
         Task<BlogPostModel> CreateBlogPost(BlogPostModel blogPost);
         Task<BlogPostModel> UpdateBlogPost(BlogPostModel blogPost);
-        Task<BlogPostModel> DeleteBlogPost(int id);
+        Task<bool> DeleteBlogPost(int id);
 
     }
 }

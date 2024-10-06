@@ -8,6 +8,6 @@ namespace Domain.IRepositories
         Task<List<BlogPostModel>> GetAll();
         Task<BlogPostModel> Create(BlogPostModel blogPost);
         Task<BlogPostModel> Update(BlogPostModel blogPost);
-        Task<BlogPostModel> Delete(int id);
+        Task<bool> Delete(int id);
     }
 }

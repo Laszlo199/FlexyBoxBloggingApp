@@ -1,6 +1,6 @@
-﻿namespace Domain.Entities
+﻿namespace Application.Dtos.BlogPostDtos
 {
-    public class BlogPost
+    public class BlogPostDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -8,7 +8,5 @@
         public DateTime CreatedAt { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
         public int AuthorId { get; set; }
-        public User User { get; set; }
-        public ICollection<BlogPostCategory> BlogPostCategories { get; set; } = new List<BlogPostCategory>();
     }
 }
