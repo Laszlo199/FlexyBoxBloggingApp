@@ -49,7 +49,9 @@ namespace WebApi.Controllers
         public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
         {
             var blogPost = _mapper.Map<BlogPostModel>(dto);
+            blogPost.Id = id;
             var updatedBlogPost = await _blogPostService.UpdateBlogPost(blogPost);
+            
 
             return Ok(_mapper.Map<BlogPostDto>(updatedBlogPost));
         }
