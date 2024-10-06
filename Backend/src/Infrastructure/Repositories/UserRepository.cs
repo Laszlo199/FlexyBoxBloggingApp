@@ -1,5 +1,7 @@
 ﻿using Application.Models;
+using Domain.Entities;
 using Domain.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -7,27 +9,59 @@ namespace Infrastructure.Repositories
     {
         private readonly AppDbContext _ctx;
 
-        public UserRepository(AppDbContext ctx) {
+        public UserRepository(AppDbContext ctx)
+        {
             _ctx = ctx;
         }
         public async Task<UserModel> Create(UserModel user)
         {
-            throw new NotImplementedException();
+            var newUser = new User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = DateTime.UtcNow,
+            };
+            await _ctx.AddAsync(newUser);
+            await _ctx.SaveChangesAsync();
+            return user;
         }
 
-        public async Task<UserModel> Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            var user = await _ctx.users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user != null)
+            {
+                _ctx.users.Remove(user);
+                await _ctx.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<List<UserModel>> GetAll()
         {
-            throw new NotImplementedException();
+            var users = await _ctx.users
+                .Select(u => new UserModel
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    CreatedAt = u.CreatedAt
+                }).ToListAsync();
+            return users;
         }
 
-        public async Task<UserModel> GetById(int id)
+        public async Task<UserModel?> GetById(int id)
         {
-            throw new NotImplementedException();
+            var user = await _ctx.users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null) return null;
+            return new UserModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt
+            };
         }
 
         public async Task<UserModel> Update(UserModel user)

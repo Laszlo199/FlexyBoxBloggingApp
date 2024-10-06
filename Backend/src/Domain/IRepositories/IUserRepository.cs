@@ -9,6 +9,6 @@ namespace Domain.IRepositories
         Task<List<UserModel>> GetAll();
         Task<UserModel> Create(UserModel user);
         Task<UserModel> Update(UserModel user);
-        Task<UserModel> Delete(int id);
+        Task<bool> Delete(int id);
     }
 }

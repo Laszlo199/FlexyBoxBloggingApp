@@ -1,4 +1,5 @@
 using Application.IServices;
+using Application.Mappers;
 using Domain.Services;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ builder.Services.AddSwaggerGen();
 //Application
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 //builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddAutoMapper(typeof(DtoMappers));
 
 //Security
 //Db
