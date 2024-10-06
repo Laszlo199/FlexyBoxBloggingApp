@@ -12,11 +12,13 @@ namespace WebApi.Extensions
             #region Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBlogPostService, BlogPostService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             #endregion
 
             #region Repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBlogPostRepository, BlogPostRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             #endregion
 
             return services;

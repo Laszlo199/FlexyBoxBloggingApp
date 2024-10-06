@@ -45,6 +45,8 @@ namespace Infrastructure.Repositories
                 {
                     Id = u.Id,
                     Username = u.Username,
+                    PasswordHash = u.PasswordHash,
+                    PasswordSalt = u.PasswordSalt,
                     Email = u.Email,
                     CreatedAt = u.CreatedAt
                 }).ToListAsync();
@@ -59,6 +61,8 @@ namespace Infrastructure.Repositories
             {
                 Id = user.Id,
                 Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                PasswordSalt = user.PasswordSalt,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt
             };
