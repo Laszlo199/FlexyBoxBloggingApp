@@ -8,5 +8,6 @@ namespace Domain.IRepositories
         Task<UserModel> GetById(int id);
         Task<List<UserModel>> GetAll();
         Task<UserModel> Create(UserModel user);
+        Task<UserModel> GetByEmail(string email);
     }
 }

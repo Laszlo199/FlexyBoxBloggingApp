@@ -16,18 +16,22 @@ namespace WebApi.Extensions
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")
-                                                 ?? throw new NullReferenceException("JWT key cannot be null"));
+                var key = Environment.GetEnvironmentVariable("JWT_KEY");
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new NullReferenceException("JWT key cannot be null");
+                }
+
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
                     ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
 
@@ -38,10 +42,9 @@ namespace WebApi.Extensions
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://localhost:3000")
+                            .WithOrigins("http://localhost:3000", "http://localhost:9090")
                             .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
+                            .AllowAnyMethod();
                     });
             });
 

@@ -1,5 +1,6 @@
 ﻿using Application.IServices;
 using Domain.IRepositories;
+using Domain.Security;
 using Domain.Services;
 using Infrastructure.Repositories;
 
@@ -13,6 +14,8 @@ namespace WebApi.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBlogPostService, BlogPostService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IAuthHelper, AuthHelper>();
             #endregion
 
             #region Repositories

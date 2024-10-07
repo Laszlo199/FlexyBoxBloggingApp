@@ -1,4 +1,5 @@
 using Application.Mappers;
+using DotNetEnv;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Extensions;
@@ -6,6 +7,8 @@ using WebApi.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Load environment variables from .env file
+Env.Load();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -30,9 +33,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 

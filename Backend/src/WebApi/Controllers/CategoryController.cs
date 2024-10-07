@@ -7,6 +7,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -16,7 +17,6 @@ namespace WebApi.Controllers
             _categoryService = categoryService;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<CategoryDto>>> GetAll()
         {
@@ -25,7 +25,6 @@ namespace WebApi.Controllers
             return Ok(categories);
         }
 
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetById(int id)
         {

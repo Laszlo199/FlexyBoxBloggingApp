@@ -7,6 +7,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -16,7 +17,6 @@ namespace WebApi.Controllers
             _userService = userService;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> GetAll()
         {
@@ -25,7 +25,6 @@ namespace WebApi.Controllers
             return Ok(users);
         }
 
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(int id)
         {

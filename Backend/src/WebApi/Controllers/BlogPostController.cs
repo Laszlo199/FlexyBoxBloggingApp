@@ -9,6 +9,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BlogPostController : ControllerBase
     {
         private readonly IBlogPostService _blogPostService;
@@ -20,7 +21,6 @@ namespace WebApi.Controllers
             _mapper = mapper;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<BlogPostDto>>> GetAll()
         {
@@ -29,7 +29,6 @@ namespace WebApi.Controllers
             return Ok(blogPosts);
         }
 
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogPostDto>> GetById(int id)
         {
@@ -38,7 +37,6 @@ namespace WebApi.Controllers
             return Ok(blogPost);
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<BlogPostDto>> Create([FromBody] CreateBlogPostDto dto)
         {
@@ -50,7 +48,6 @@ namespace WebApi.Controllers
         }
 
         // ToDO: Refactor Update method
-        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
         {
@@ -62,7 +59,6 @@ namespace WebApi.Controllers
             return Ok(_mapper.Map<BlogPostDto>(updatedBlogPost));
         }
 
-        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

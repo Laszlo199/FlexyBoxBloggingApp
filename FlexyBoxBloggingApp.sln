@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{F6B4F36D-9993-4B15-9002-5D2F4D862EAA}"
-	ProjectSection(SolutionItems) = preProject
-		.env = .env
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{84F1F665-9614-48CC-94DD-57375EA882D4}"
 EndProject
