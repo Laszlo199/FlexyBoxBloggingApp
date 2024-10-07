@@ -26,11 +26,11 @@ namespace WebApi.Extensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-                    ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+                    //ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
@@ -38,7 +38,7 @@ namespace WebApi.Extensions
             // CORS config
             services.AddCors(option =>
             {
-                option.AddPolicy("Pw_WebApi",
+                option.AddPolicy("webapi",
                     builder =>
                     {
                         builder
