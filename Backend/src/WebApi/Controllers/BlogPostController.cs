@@ -44,7 +44,7 @@ namespace WebApi.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = createdBlogPost.Id }, createdBlogPost);
         }
-
+        // ToDO: Refactor Update method
         [HttpPut("{id}")]
         public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
         {
