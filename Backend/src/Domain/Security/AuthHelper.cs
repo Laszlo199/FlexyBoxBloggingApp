@@ -11,6 +11,7 @@ namespace Domain.Security
         {
             Env.Load();
         }
+
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             var pepper = Environment.GetEnvironmentVariable("JWT_PEPPER") ?? throw new NullReferenceException("Pepper cannot be null");
