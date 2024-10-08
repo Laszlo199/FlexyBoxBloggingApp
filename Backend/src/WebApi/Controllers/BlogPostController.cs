@@ -2,12 +2,14 @@
 using Application.IServices;
 using Application.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BlogPostController : ControllerBase
     {
         private readonly IBlogPostService _blogPostService;
@@ -45,13 +47,14 @@ namespace WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdBlogPost.Id }, createdBlogPost);
         }
 
+        // ToDO: Refactor Update method
         [HttpPut("{id}")]
         public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
         {
             var blogPost = _mapper.Map<BlogPostModel>(dto);
             blogPost.Id = id;
             var updatedBlogPost = await _blogPostService.UpdateBlogPost(blogPost);
-            
+
 
             return Ok(_mapper.Map<BlogPostDto>(updatedBlogPost));
         }

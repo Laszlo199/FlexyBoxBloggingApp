@@ -20,6 +20,8 @@ namespace Infrastructure.Repositories
             {
                 Username = user.Username,
                 Email = user.Email,
+                PasswordHash = user.PasswordHash,
+                PasswordSalt = user.PasswordSalt,
                 CreatedAt = DateTime.UtcNow,
             };
             await _ctx.AddAsync(newUser);
@@ -42,6 +44,21 @@ namespace Infrastructure.Repositories
             return users;
         }
 
+        public async Task<UserModel> GetByEmail(string email)
+        {
+            var user = await _ctx.users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return null;
+            return new UserModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                PasswordSalt = user.PasswordSalt,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt
+            };
+        }
+
         public async Task<UserModel?> GetById(int id)
         {
             var user = await _ctx.users.FirstOrDefaultAsync(u => u.Id == id);
@@ -56,5 +73,6 @@ namespace Infrastructure.Repositories
                 CreatedAt = user.CreatedAt
             };
         }
+
     }
 }

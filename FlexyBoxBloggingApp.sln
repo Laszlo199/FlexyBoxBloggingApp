@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{84F1F665-961
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{982564C1-B7D7-4CCA-90AE-6D88CA802BC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Backend\src\Application\Application.csproj", "{5BC7ACA7-1BCB-4692-AA86-4F8F3F8B5CC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Backend\src\Application\Application.csproj", "{5BC7ACA7-1BCB-4692-AA86-4F8F3F8B5CC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Backend\src\Domain\Domain.csproj", "{CFCC83D3-941D-4447-BB4F-44BF803E7014}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Backend\src\Domain\Domain.csproj", "{CFCC83D3-941D-4447-BB4F-44BF803E7014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Backend\src\Infrastructure\Infrastructure.csproj", "{655620A1-EB91-4124-B4CC-652FAC1CF132}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Backend\src\Infrastructure\Infrastructure.csproj", "{655620A1-EB91-4124-B4CC-652FAC1CF132}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "Backend\src\WebApi\WebApi.csproj", "{601B59F6-31AF-4816-B4A9-1D69937CCC2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "Backend\src\WebApi\WebApi.csproj", "{601B59F6-31AF-4816-B4A9-1D69937CCC2E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{319F53E8-C86C-43EA-B630-CB57A2E2F0D5}"
 	ProjectSection(SolutionItems) = preProject

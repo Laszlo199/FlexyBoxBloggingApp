@@ -1,4 +1,5 @@
 using Application.Mappers;
+using DotNetEnv;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Extensions;
@@ -6,16 +7,18 @@ using WebApi.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Load environment variables from .env file
+Env.Load();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 //Application
 builder.Services.AddServicesAndRepositories();
 builder.Services.AddAutoMapper(typeof(DtoMappers));
 //Security
+builder.Services.AddSecurityServices(builder.Configuration);
 //Db
 builder.Services.AddDbContext<AppDbContext>(options =>
        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -29,9 +32,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
