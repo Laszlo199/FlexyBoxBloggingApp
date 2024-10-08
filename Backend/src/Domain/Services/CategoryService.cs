@@ -1,6 +1,7 @@
 ﻿using Application.IServices;
 using Application.Models;
 using Domain.IRepositories;
+using static Domain.Exceptions.Exceptions;
 
 namespace Domain.Services
 {
@@ -17,9 +18,10 @@ namespace Domain.Services
             return await _categoryRepository.GetAll();
         }
 
-        public async Task<CategoryModel> GetCategoryById(int id)
+        public async Task<CategoryModel?> GetCategoryById(int id)
         {
-            return await _categoryRepository.GetById(id);
+            return await _categoryRepository.GetById(id)
+                 ?? throw new NotFoundException($"Category not found by this ID: {id}");
         }
     }
 }

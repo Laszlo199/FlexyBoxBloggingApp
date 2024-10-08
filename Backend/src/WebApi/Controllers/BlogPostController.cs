@@ -22,7 +22,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<BlogPostDto>>> GetAll()
+        public async Task<ActionResult<List<BlogPostDto>>> GetAllBlogPost()
         {
             var blogPosts = await _blogPostService.GetAllBlogPosts();
 
@@ -30,7 +30,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BlogPostDto>> GetById(int id)
+        public async Task<ActionResult<BlogPostDto>> GetBlogPostById(int id)
         {
             var blogPost = await _blogPostService.GetBlogPostById(id);
 
@@ -38,18 +38,18 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BlogPostDto>> Create([FromBody] CreateBlogPostDto dto)
+        public async Task<ActionResult<BlogPostDto>> CreateNewBlogPost([FromBody] CreateBlogPostDto dto)
         {
             var blogPostModel = _mapper.Map<BlogPostModel>(dto);
             var createdBlogPost = await _blogPostService.CreateBlogPost(blogPostModel);
             var createdDto = _mapper.Map<CreateBlogPostDto>(createdBlogPost);
 
-            return CreatedAtAction(nameof(GetById), new { id = createdBlogPost.Id }, createdBlogPost);
+            return CreatedAtAction(nameof(GetBlogPostById), new { id = createdBlogPost.Id }, createdBlogPost);
         }
 
         // ToDO: Refactor Update method
         [HttpPut("{id}")]
-        public async Task<ActionResult<BlogPostDto>> Update(int id, [FromBody] UpdateBlogPostDto dto)
+        public async Task<ActionResult<BlogPostDto>> UpdateBlogPost(int id, [FromBody] UpdateBlogPostDto dto)
         {
             var blogPost = _mapper.Map<BlogPostModel>(dto);
             blogPost.Id = id;
@@ -60,7 +60,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteBlogPost(int id)
         {
             var deleted = await _blogPostService.DeleteBlogPost(id);
             if (!deleted)

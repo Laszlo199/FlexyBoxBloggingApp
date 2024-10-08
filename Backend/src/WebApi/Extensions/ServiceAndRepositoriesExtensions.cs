@@ -3,6 +3,7 @@ using Domain.IRepositories;
 using Domain.Security;
 using Domain.Services;
 using Infrastructure.Repositories;
+using WebApi.Middleware;
 
 namespace WebApi.Extensions
 {
@@ -11,17 +12,38 @@ namespace WebApi.Extensions
         public static IServiceCollection AddServicesAndRepositories(this IServiceCollection services)
         {
             #region Services
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IBlogPostService, BlogPostService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<ISecurityService, SecurityService>();
-            services.AddScoped<IAuthHelper, AuthHelper>();
+            services.AddScoped<IUserService, UserService>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+
+            services.AddScoped<IBlogPostService, BlogPostService>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+
+            services.AddScoped<ICategoryService, CategoryService>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddScoped<ISecurityService, SecurityService>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddScoped<IAuthHelper, AuthHelper>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+            //services.AddScoped<IExceptionHandler, GlobalExceptionHandler>();
             #endregion
 
             #region Repositories
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IBlogPostRepository, BlogPostRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IUserRepository, UserRepository>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+
+            services.AddScoped<IBlogPostRepository, BlogPostRepository>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>()
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
             #endregion
 
             return services;

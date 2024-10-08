@@ -1,5 +1,6 @@
 ﻿using Application.Models;
 using Domain.IRepositories;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -13,37 +14,48 @@ namespace Infrastructure.Repositories
             _ctx = ctx;
         }
 
-        public async Task<CategoryModel> Create(CategoryModel blogPost)
+        private async Task<T> ExecuteWithExceptionHandling<T>(Func<Task<T>> operation)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> Delete(int id)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                return await operation();
+            }
+            catch (SqlException ex)
+            {
+                throw new DbUpdateException("Failed to execute a database operation.", ex);
+            }
         }
 
         public async Task<List<CategoryModel>> GetAll()
         {
-            var categories = await _ctx.categories.Select(c => new CategoryModel
-            {
-                Id = c.Id,
-                Name = c.Name
 
-            }).ToListAsync();
-            return categories;
+            return await ExecuteWithExceptionHandling(async () =>
+            {
+                var categories = await _ctx.categories
+                    .AsNoTracking()
+                    .Select(c => new CategoryModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToListAsync();
+                return categories;
+            });
         }
 
-        public async Task<CategoryModel> GetById(int id)
+        public async Task<CategoryModel?> GetById(int id)
         {
-            var category = await _ctx.categories
-                .Where(c => c.Id == id)
-                .Select(c => new CategoryModel
-                {
-                    Id = c.Id,
-                    Name = c.Name
-                }).FirstOrDefaultAsync();
-            return category;
+            return await ExecuteWithExceptionHandling(async () =>
+            {
+                var category = await _ctx.categories
+                    .AsNoTracking()
+                    .Where(c => c.Id == id)
+                    .Select(c => new CategoryModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).FirstOrDefaultAsync();
+                return category;
+            });
         }
     }
 }

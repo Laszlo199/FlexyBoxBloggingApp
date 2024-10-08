@@ -53,7 +53,6 @@ namespace Infrastructure
             var passwordSalt = hmac.Key;
 
             // Seed Users
-            // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

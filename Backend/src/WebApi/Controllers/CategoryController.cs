@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetAll()
+        public async Task<ActionResult<List<CategoryDto>>> GetAllCategory()
         {
             var categories = await _categoryService.GetAllCategory();
 
@@ -26,7 +26,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetById(int id)
+        public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
             var category = await _categoryService.GetCategoryById(id);
 

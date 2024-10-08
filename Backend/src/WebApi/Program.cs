@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 //Application
 builder.Services.AddServicesAndRepositories();
 builder.Services.AddAutoMapper(typeof(DtoMappers));
+builder.Services.AddProblemDetails();
 //Security
 builder.Services.AddSecurityServices(builder.Configuration);
 //Db
@@ -25,6 +26,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
        sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 var app = builder.Build();
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -36,6 +40,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStatusCodePages();
+app.UseExceptionHandler();
+//app.UseMiddleware<GlobalExceptionHandler>();
 
 
 app.MapControllers();

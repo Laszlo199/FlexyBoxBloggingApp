@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetAll()
+        public async Task<ActionResult<List<UserDto>>> GetAllUser()
         {
             var users = await _userService.GetAllUsers();
 
@@ -26,7 +26,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetById(int id)
+        public async Task<ActionResult<UserDto>> GetUSerById(int id)
         {
             var user = await _userService.GetUserById(id);
 

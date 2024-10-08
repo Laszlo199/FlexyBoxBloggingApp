@@ -1,6 +1,7 @@
 ﻿using Application.IServices;
 using Application.Models;
 using Domain.IRepositories;
+using static Domain.Exceptions.Exceptions;
 
 namespace Domain.Services
 {
@@ -24,7 +25,8 @@ namespace Domain.Services
 
         public async Task<UserModel> GetUserById(int id)
         {
-            return await _userRepository.GetById(id);
+            return await _userRepository.GetById(id)
+                ?? throw new NotFoundException($"User not found by this ID: {id}");
         }
     }
 }

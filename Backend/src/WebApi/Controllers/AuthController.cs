@@ -2,6 +2,7 @@
 using Application.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Domain.Exceptions.Exceptions;
 
 namespace WebApi.Controllers
 {
@@ -23,7 +24,7 @@ namespace WebApi.Controllers
             var token = await _securityService.GenerateJwtToken(loginDto.Email, loginDto.Password);
             if (token is null)
             {
-                return BadRequest("Invalid username or password!");
+                throw new BadRequestException("Invalid username or password!");
             }
             return new TokenDto
             {
@@ -38,13 +39,13 @@ namespace WebApi.Controllers
         {
             var exists = await _securityService.EmailExists(registerDto.Email);
             if (exists)
-                return BadRequest("Email is already in use!");
+                throw new BadRequestException("Email is already in use!");
             if (await _securityService.Create(registerDto.Email, registerDto.Password, registerDto.Username))
             {
                 var token = await _securityService.GenerateJwtToken(registerDto.Email, registerDto.Password);
                 if (token is null)
                 {
-                    return BadRequest("Something went wrong during the registration process. Please contact an admin");
+                    throw new("Something went wrong during the registration process. Please contact an admin");
                 }
                 return new TokenDto
                 {
@@ -53,7 +54,7 @@ namespace WebApi.Controllers
                     UserId = token.UserId,
                 };
             }
-            return BadRequest("Something went wrong during the registration process. Please contact an admin");
+            throw new("Something went wrong during the registration process. Please contact an admin");
         }
     }
 }

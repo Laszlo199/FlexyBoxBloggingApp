@@ -14,7 +14,9 @@ namespace Domain.Security
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            var pepper = Environment.GetEnvironmentVariable("JWT_PEPPER") ?? throw new NullReferenceException("Pepper cannot be null");
+            var pepper = Environment.GetEnvironmentVariable("JWT_PEPPER")
+                ?? throw new NullReferenceException("Pepper cannot be null");
+
             // Generate salt (16 bytes)
             passwordSalt = new byte[16];
             using (var rng = RandomNumberGenerator.Create())
@@ -40,7 +42,8 @@ namespace Domain.Security
 
         public bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
-            var pepper = Environment.GetEnvironmentVariable("JWT_PEPPER") ?? throw new NullReferenceException("Pepper cannot be null");
+            var pepper = Environment.GetEnvironmentVariable("JWT_PEPPER")
+                ?? throw new NullReferenceException("Pepper cannot be null");
             // Include the pepper
             var passwordWithPepper = password + pepper;
 
