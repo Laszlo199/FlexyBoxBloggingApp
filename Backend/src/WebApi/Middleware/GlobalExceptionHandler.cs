@@ -14,6 +14,7 @@ namespace WebApi.Middleware
         {
             _logger = logger;
         }
+
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
             Exception exception,
