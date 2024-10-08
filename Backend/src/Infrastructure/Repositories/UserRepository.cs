@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories
         public async Task<List<UserModel>> GetAll()
         {
             var users = await _ctx.users
+                .AsNoTracking()
                 .Select(u => new UserModel
                 {
                     Id = u.Id,

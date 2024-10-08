@@ -56,7 +56,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<BlogPostModel>> GetAll()
         {
-            var blogPosts = await _ctx.blogPosts
+            return await _ctx.blogPosts
                 .AsNoTracking()
                 .Include(bp => bp.BlogPostCategories)
                 .Select(bp => new BlogPostModel
@@ -69,12 +69,12 @@ namespace Infrastructure.Repositories
                     AuthorId = bp.AuthorId,
                     CategoryIds = bp.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList()
                 }).ToListAsync();
-            return blogPosts;
         }
 
         public async Task<BlogPostModel> GetById(int id)
         {
             var blogPost = await _ctx.blogPosts
+                .AsNoTracking()
                 .Where(bp => bp.Id == id)
                 .Select(bp => new BlogPostModel
                 {
@@ -83,10 +83,10 @@ namespace Infrastructure.Repositories
                     Content = bp.Content,
                     CreatedAt = bp.CreatedAt,
                     LastUpdatedAt = bp.LastUpdatedAt,
-                    AuthorId = bp.AuthorId
+                    AuthorId = bp.AuthorId,
+                    CategoryIds = bp.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList()
                 }).FirstOrDefaultAsync();
             return blogPost;
-
         }
 
         public async Task<BlogPostModel> Update(BlogPostModel blogPost)

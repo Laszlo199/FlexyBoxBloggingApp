@@ -25,18 +25,21 @@ namespace Infrastructure.Repositories
 
         public async Task<List<CategoryModel>> GetAll()
         {
-            var categories = await _ctx.categories.Select(c => new CategoryModel
-            {
-                Id = c.Id,
-                Name = c.Name
+            var categories = await _ctx.categories
+                .AsNoTracking()
+                .Select(c => new CategoryModel
+                {
+                    Id = c.Id,
+                    Name = c.Name
 
-            }).ToListAsync();
+                }).ToListAsync();
             return categories;
         }
 
         public async Task<CategoryModel> GetById(int id)
         {
             var category = await _ctx.categories
+                .AsNoTracking()
                 .Where(c => c.Id == id)
                 .Select(c => new CategoryModel
                 {
