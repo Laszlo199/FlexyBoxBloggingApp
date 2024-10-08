@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Domain.Exceptions.Exceptions;
 
 namespace Domain.Services
 {
@@ -34,7 +35,7 @@ namespace Domain.Services
         {
             var user = await _userRepository.GetByEmail(email);
             if (user == null || !_authHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+                throw new UnauthorizedAccessException("Invalid email or password");
 
             var claims = new List<Claim>
             {
@@ -73,7 +74,12 @@ namespace Domain.Services
 
         public async Task<bool> EmailExists(string email)
         {
-            return await _userRepository.GetByEmail(email) != null;
+            var user = await _userRepository.GetByEmail(email);
+            if (user == null)
+            {
+                throw new NotFoundException($"User not found by this Email: {email}");
+            }
+            return true;
         }
     }
 }

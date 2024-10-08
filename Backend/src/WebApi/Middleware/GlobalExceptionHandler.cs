@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using static WebApi.Middleware.Exceptions;
+using static Domain.Exceptions.Exceptions;
 
 namespace WebApi.Middleware
 {
@@ -54,6 +54,7 @@ namespace WebApi.Middleware
                 ForbiddenException => (StatusCodes.Status403Forbidden, exception.Message),
                 TimeoutException => (StatusCodes.Status408RequestTimeout, exception.Message),
                 BadRequestException => (StatusCodes.Status400BadRequest, exception.Message),
+                NullReferenceException => (StatusCodes.Status500InternalServerError, exception.Message),
                 ServiceUnavailableException => (StatusCodes.Status503ServiceUnavailable, exception.Message),
                 _ => (StatusCodes.Status500InternalServerError, "An error occurred")
             };

@@ -1,4 +1,4 @@
-﻿namespace WebApi.Middleware
+﻿namespace Domain.Exceptions
 {
     public class Exceptions
     {
