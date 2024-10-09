@@ -6,4 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Dtos\" />
+    <Folder Include="Application\Models\" />
+    <Folder Include="Application\Extensions\" />
+    <Folder Include="Application\Services\" />
+  </ItemGroup>
+
 </Project>
