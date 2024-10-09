@@ -56,7 +56,7 @@ namespace Domain.Services
             return new TokenModel
             {
                 Jwt = new JwtSecurityTokenHandler().WriteToken(token),
-                Message = "ok",
+                Message = "Login succesfully",
                 UserId = user.Id
             };
         }
