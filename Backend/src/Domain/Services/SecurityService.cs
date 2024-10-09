@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static Domain.Exceptions.Exceptions;
 
 namespace Domain.Services
 {
@@ -28,13 +27,16 @@ namespace Domain.Services
             _signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             _issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? string.Empty;
             _audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? string.Empty;
-            _tokenExpirationMinutes = int.TryParse(Environment.GetEnvironmentVariable("JWT_EXPIRATION_MINUTES"), out int expiration) ? expiration : 30;
+            _tokenExpirationMinutes = Convert.ToInt32(Environment.GetEnvironmentVariable("JWT_EXPIRATION_MINUTES"));
         }
 
         public async Task<TokenModel?> GenerateJwtToken(string email, string password)
         {
             var user = await _userRepository.GetByEmail(email);
-            if (user == null || !_authHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (user == null)
+                throw new UnauthorizedAccessException($"User with email {email} not found.");
+
+            if (!_authHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 throw new UnauthorizedAccessException("Invalid email or password");
 
             var claims = new List<Claim>
@@ -75,11 +77,7 @@ namespace Domain.Services
         public async Task<bool> EmailExists(string email)
         {
             var user = await _userRepository.GetByEmail(email);
-            if (user == null)
-            {
-                throw new NotFoundException($"User not found by this Email: {email}");
-            }
-            return true;
+            return user is not null;
         }
     }
 }
