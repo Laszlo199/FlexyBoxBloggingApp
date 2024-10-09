@@ -22,10 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloggingAppFrontend", "Frontend\BloggingAppFrontend\BloggingAppFrontend.csproj", "{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{73774458-A58F-488A-8DED-7B634D7C7C85}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,10 +44,6 @@ Global
 		{601B59F6-31AF-4816-B4A9-1D69937CCC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{601B59F6-31AF-4816-B4A9-1D69937CCC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{601B59F6-31AF-4816-B4A9-1D69937CCC2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,8 +54,6 @@ Global
 		{CFCC83D3-941D-4447-BB4F-44BF803E7014} = {84F1F665-9614-48CC-94DD-57375EA882D4}
 		{655620A1-EB91-4124-B4CC-652FAC1CF132} = {84F1F665-9614-48CC-94DD-57375EA882D4}
 		{601B59F6-31AF-4816-B4A9-1D69937CCC2E} = {84F1F665-9614-48CC-94DD-57375EA882D4}
-		{B78C6EB5-9DAD-43FC-9D75-32345FA91DA3} = {73774458-A58F-488A-8DED-7B634D7C7C85}
-		{73774458-A58F-488A-8DED-7B634D7C7C85} = {982564C1-B7D7-4CCA-90AE-6D88CA802BC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74A81C23-0D28-40DB-B409-47B16CFCBD70}
