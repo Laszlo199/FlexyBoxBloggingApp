@@ -1,3 +1,4 @@
+using BloggingAppFrontend.Application.Extension;
 using BloggingAppFrontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddServices();
+var baseAddress = "http://localhost:9090/";
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
 
 var app = builder.Build();
 
