@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Extensions\**" />
+    <Content Remove="Application\Extensions\**" />
+    <EmbeddedResource Remove="Application\Extensions\**" />
+    <None Remove="Application\Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Application\Models\" />
-    <Folder Include="Application\Extensions\" />
     <Folder Include="Application\Helpers\" />
     <Folder Include="Components\Shared\" />
   </ItemGroup>

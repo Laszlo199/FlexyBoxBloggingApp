@@ -6,7 +6,7 @@ namespace BloggingAppFrontend.Application.Services
 {
     public class AuthService
     {
-        public interface IAuthenticationService
+        public interface IAuthService
         {
             TokenDto? TokenDto { get; }
             Task Initialize();
@@ -15,14 +15,14 @@ namespace BloggingAppFrontend.Application.Services
             Task Logout();
         }
 
-        public class AuthenticationService : IAuthenticationService
+        public class AuthService : IAuthService
         {
             private IHttpService _httpService;
             private NavigationManager _navigationManager;
             private ILocalStorageService _localStorageService;
             public TokenDto? TokenDto { get; private set; }
 
-            public AuthenticationService(
+            public AuthService(
                 IHttpService httpService,
                 NavigationManager navigationManager,
                 ILocalStorageService localStorageService
