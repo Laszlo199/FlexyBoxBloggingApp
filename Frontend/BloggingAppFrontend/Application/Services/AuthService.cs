@@ -8,7 +8,7 @@ namespace BloggingAppFrontend.Application.Services
     {
         TokenDto? TokenDto { get; }
         Task Initialize();
-        Task<bool> Register(LoginDto loginDto);
+        Task<bool> Register(RegisterDto registerDto);
         Task<bool> Login(LoginDto loginDto);
         Task Logout();
     }
@@ -36,14 +36,15 @@ namespace BloggingAppFrontend.Application.Services
             TokenDto = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
         }
 
-        public async Task<bool> Register(LoginDto loginDto)
+        public async Task<bool> Register(RegisterDto registerDto)
         {
-            var loginDtoCopy = new LoginDto
+            var RegisterDtoCopy = new RegisterDto
             {
-                Email = loginDto.Email,
-                Password = loginDto.Password,
+                Email = registerDto.Email,
+                Password = registerDto.Password,
+                Username = registerDto.Username,
             };
-            TokenDto = await _httpService.Post<TokenDto>("/api/Auth/Register", loginDtoCopy);
+            TokenDto = await _httpService.Post<TokenDto>("/api/Auth/Register", RegisterDtoCopy);
             if (TokenDto is null)
             {
                 return false;
