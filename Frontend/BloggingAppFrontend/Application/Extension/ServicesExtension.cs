@@ -14,7 +14,6 @@ namespace BloggingAppFrontend.Application.Extension
             services.AddTransient<IHttpService, HttpService>();
             services.AddTransient<IBlogPostService, BlogPostService>();
             services.AddTransient<ICategoryService, CategoryService>();
-
             #endregion
 
             services.AddBlazoredLocalStorage();
