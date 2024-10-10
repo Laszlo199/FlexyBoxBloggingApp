@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Blazored.LocalStorage;
+using Blazored.Toast;
+using BloggingAppFrontend.Application.Services;
 
 namespace BloggingAppFrontend.Application.Extension
 {
@@ -8,13 +10,15 @@ namespace BloggingAppFrontend.Application.Extension
         {
             #region Service
 
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-            //services.AddTransient<IHttpService, HttpService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IHttpService, HttpService>();
+            services.AddTransient<IBlogPostService, BlogPostService>();
+            services.AddTransient<ICategoryService, CategoryService>();
 
             #endregion
 
-            //services.AddBlazoredLocalStorage();
-            //services.AddBlazoredToast();
+            services.AddBlazoredLocalStorage();
+            services.AddBlazoredToast();
 
             return services;
         }
