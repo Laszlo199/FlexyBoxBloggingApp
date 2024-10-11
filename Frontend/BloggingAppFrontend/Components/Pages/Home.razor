@@ -4,21 +4,41 @@
 
 <div class="container mt-5">
     <div class="text-center mb-4">
-        <h1 class="display-4 fw-bold">Latest Blog Posts</h1>
+        <h1 class="display-4 fw-bold text-primary">Latest Blog Posts</h1>
         <p class="text-muted">Catch up with our most recent stories and updates!</p>
     </div>
-    
+
     <div class="row g-4">
         @foreach (var post in blogPosts)
         {
             <div class="col-md-6 col-lg-4">
-                <div class="card shadow-sm h-100">
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog image">
+                <div class="card shadow-sm h-100 border-0" style="border-radius: 12px;">
+                    <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
+                        <img src="@post.ImageUrl" class="card-img-top" alt="Blog image" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    </a>
                     <div class="card-body">
-                        <h5 class="card-title">@post.Title</h5>
-                        <p class="card-text text-muted">@post.Date.ToString("MMMM dd, yyyy")</p>
-                        <p class="card-text">@post.Content.Substring(0, Math.Min(100, post.Content.Length))...</p>
-                        <a href="@($"/post/{post.Id}")" class="btn btn-primary">Read More</a>
+                        <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
+                            <p class="text-muted mb-1">@post.Date.ToString("MMMM dd, yyyy") • @post.ReadTime min</p>
+                            <h5 class="card-title text-dark">@post.Title</h5>
+                            <p class="card-text text-secondary">@post.Content.Substring(0, Math.Min(80, post.Content.Length))...</p>
+                            <p class="text-muted">By @post.Author</p>
+                        </a>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-chat text-muted"></i>
+                            <span class="ms-1 text-muted">@post.CommentCount</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="@(post.IsLiked ? "bi-heart-fill" : "bi-heart")" @onclick="() => ToggleHeart(post)" style="cursor: pointer; color: @(post.IsLiked ? "red" : "gray")"></i>
+                            <div class="dropdown">
+                                <i class="bi bi-three-dots-vertical ms-3 text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                    <li><a class="dropdown-item" href="@($"/edit/{post.Id}")">Edit</a></li>
+                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,24 +49,26 @@
 @code {
     private List<BlogPost> blogPosts = new List<BlogPost>
     {
-        new BlogPost { Id = 1, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 2, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 3, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 4, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 5, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 6, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
-        new BlogPost { Id = 7, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content..." },
+        new BlogPost { Id = 1, Title = "The Mistake Every Small Business Makes in Its First Year", Date = new DateTime(2023, 5, 30), ReadTime = 1, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "John Doe", ImageUrl = "https://picsum.photos/300/200?random=1", CommentCount = 0, IsLiked = false },
+        new BlogPost { Id = 2, Title = "SEO Tools to Boost Your Sales", Date = new DateTime(2023, 5, 30), ReadTime = 2, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "Jane Smith", ImageUrl = "https://picsum.photos/300/200?random=2", CommentCount = 0, IsLiked = false },
+        new BlogPost { Id = 3, Title = "Finding Ideas for Your Next Podcast", Date = new DateTime(2023, 5, 30), ReadTime = 2, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "Tom Brown", ImageUrl = "https://picsum.photos/300/200?random=3", CommentCount = 0, IsLiked = false },
     };
 
     public class BlogPost
     {
         public int Id { get; set; }
-        public string Title { get; set; }
+        public required string Title { get; set; }
         public DateTime Date { get; set; }
-        public string Content { get; set; }
+        public int ReadTime { get; set; }
+        public required string Content { get; set; }
+        public required string ImageUrl { get; set; }
+        public required string Author { get; set; }
+        public int CommentCount { get; set; }
+        public bool IsLiked { get; set; }
     }
-    private void navigateToWeather()
+
+    private void ToggleHeart(BlogPost post)
     {
-        Navigation.NavigateTo("weather");
+        post.IsLiked = !post.IsLiked;
     }
 }

@@ -3,38 +3,19 @@
 @inject NavigationManager Navigation
 
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg">
-                <div class="card-header text-center">
-                    <h2>@(isEditMode ? "Edit Post" : "Create New Post")</h2>
-                </div>
-                <div class="card-body">
-                    <EditForm Model="@postModel" OnValidSubmit="HandleValidSubmit">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+    <div class="row">
+        <div class="col-12">
+            <!-- Post Title -->
+            <input type="text" class="form-control mb-4" @bind="postModel.Title" placeholder="Post title" style="font-size: 1.5rem; padding: 1rem;" />
 
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
-                            <InputText id="title" class="form-control" @bind-Value="postModel.Title" />
-                        </div>
+            <!-- Text Editor Area (Content) -->
+            <textarea class="form-control mb-4" rows="10" @bind="postModel.Content" placeholder="Write your post here..." style="font-size: 1.2rem;"></textarea>
 
-                        <div class="mb-3">
-                            <label for="content" class="form-label">Content</label>
-                            <InputTextArea id="content" class="form-control" @bind-Value="postModel.Content" rows="5" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Date</label>
-                            <InputDate id="date" class="form-control" @bind-Value="postModel.Date" />
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary me-2">@(isEditMode ? "Save Changes" : "Create Post")</button>
-                            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-                        </div>
-                    </EditForm>
-                </div>
+            <!-- Action Buttons (Save, Preview, Publish) -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary me-2" @onclick="SavePost">Save</button>
+                <button type="button" class="btn btn-light me-2">Preview</button>
+                <button type="button" class="btn btn-primary" @onclick="PublishPost">Publish</button>
             </div>
         </div>
     </div>
@@ -43,16 +24,55 @@
 @code {
     [Parameter]
     public int? id { get; set; }
+
     private BlogPost postModel = new BlogPost();
     private bool isEditMode;
 
     protected override async Task OnInitializedAsync()
     {
-     
+        // Check if we're in edit mode
+        isEditMode = id.HasValue;
+
+        if (isEditMode)
+        {
+            // Simulate fetching a post by ID (you would normally fetch this from a database)
+            // In a real application, replace this with a service call to load the post from a database.
+            postModel = await LoadPostById(id.Value);
+        }
     }
 
-    private async Task HandleValidSubmit()
+    private Task<BlogPost> LoadPostById(int postId)
     {
+        // Simulated database fetch - replace with real fetch logic
+        return Task.FromResult(new BlogPost
+            {
+                Id = postId,
+                Title = "Sample Post",
+                Content = "This is the content of the sample post.",
+                Date = DateTime.Now
+            });
+    }
+
+    private void SavePost()
+    {
+        if (isEditMode)
+        {
+            // Update existing post
+            // Logic to update the post in the database
+        }
+        else
+        {
+            // Create new post
+            // Logic to create a new post in the database
+        }
+
+        // Redirect to homepage after saving
+        Navigation.NavigateTo("/");
+    }
+
+    private void PublishPost()
+    {
+        // Logic to publish the post, then navigate to another page or display a message
         Navigation.NavigateTo("/");
     }
 
@@ -64,9 +84,7 @@
     public class BlogPost
     {
         public int Id { get; set; }
-       
         public string Title { get; set; } = string.Empty;
-   
         public string Content { get; set; } = string.Empty;
         public DateTime Date { get; set; } = DateTime.Now;
     }
