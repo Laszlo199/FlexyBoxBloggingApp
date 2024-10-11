@@ -1,14 +1,50 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-<button type="button" @onclick="navigateToWeather">Go to Weather</button>
-
-Welcome to your new app.
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold">Latest Blog Posts</h1>
+        <p class="text-muted">Catch up with our most recent stories and updates!</p>
+    </div>
+    
+    <div class="row g-4">
+        @foreach (var post in blogPosts)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Blog image">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text text-muted">@post.Date.ToString("MMMM dd, yyyy")</p>
+                        <p class="card-text">@post.Content.Substring(0, Math.Min(100, post.Content.Length))...</p>
+                        <a href="@($"/post/{post.Id}")" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 @code {
+    private List<BlogPost> blogPosts = new List<BlogPost>
+    {
+        new BlogPost { Id = 1, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 2, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 3, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 4, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 5, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 6, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content..." },
+        new BlogPost { Id = 7, Title = "Sample Post", Date = DateTime.Now, Content = "This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content...This is a short preview of the blog content..." },
+    };
+
+    public class BlogPost
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public DateTime Date { get; set; }
+        public string Content { get; set; }
+    }
     private void navigateToWeather()
     {
         Navigation.NavigateTo("weather");

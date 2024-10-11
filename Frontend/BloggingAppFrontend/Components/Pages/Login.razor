@@ -1,0 +1,48 @@
+﻿@page "/login"
+@using BloggingAppFrontend.Components.Layout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@layout AuthLayout
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <InputText id="username" class="form-control" @bind-Value="loginModel.Username" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+                    </EditForm>
+                    <div class="mt-3 text-center">
+                        <span>Don't have an account yet?</span>
+                        <a href="/Register" class="btn btn-link">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private void HandleLogin()
+    {
+        // Handle the login logic here (e.g., API calls, authentication)
+        Console.WriteLine($"Login attempted with Username: {loginModel.Username}");
+        Navigation.NavigateTo("/");
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}
