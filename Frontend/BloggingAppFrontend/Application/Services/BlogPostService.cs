@@ -22,7 +22,12 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task<IEnumerable<BlogPostDto>> GetAllPosts()
         {
-            return await _httpService.Get<IEnumerable<BlogPostDto>>("/api/BlogPosts");
+            var response = await _httpService.Get<IEnumerable<BlogPostDto>>("/api/BlogPost");
+            if (response == null)
+            {
+                Console.WriteLine("No data received from the backend.");
+            }
+            return response;
         }
 
         public async Task<BlogPostDto?> GetPostById(int id)

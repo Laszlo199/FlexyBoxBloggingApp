@@ -42,10 +42,10 @@ namespace Infrastructure.Repositories
                 await _ctx.blogPosts.AddAsync(newPost);
                 await _ctx.SaveChangesAsync();
 
-                var blogPostCategories = blogPost.CategoryIds.Select(categoryId => new BlogPostCategory
+                var blogPostCategories = blogPost.Categories.Select(category => new BlogPostCategory
                 {
                     BlogPostId = newPost.Id,
-                    CategoryId = categoryId
+                    CategoryId = category.Id
                 }).ToList();
 
                 await _ctx.BlogPostCategories.AddRangeAsync(blogPostCategories);
@@ -78,7 +78,9 @@ namespace Infrastructure.Repositories
             {
                 return await _ctx.blogPosts
                     .AsNoTracking()
+                    .Include(bp => bp.User)
                     .Include(bp => bp.BlogPostCategories)
+                        .ThenInclude(bpc => bpc.Category)
                     .Select(bp => new BlogPostModel
                     {
                         Id = bp.Id,
@@ -87,8 +89,17 @@ namespace Infrastructure.Repositories
                         CreatedAt = bp.CreatedAt,
                         LastUpdatedAt = bp.LastUpdatedAt,
                         AuthorId = bp.AuthorId,
-                        CategoryIds = bp.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList()
-                    }).ToListAsync();
+                        AuthorName = bp.User.Username,
+
+                        Categories = bp.BlogPostCategories
+                            .Select(bpc => new CategoryModel
+                            {
+                                Id = bpc.Category.Id,
+                                Name = bpc.Category.Name
+                            })
+                            .ToList()
+                    })
+                    .ToListAsync();
             });
         }
 
@@ -107,7 +118,12 @@ namespace Infrastructure.Repositories
                         CreatedAt = bp.CreatedAt,
                         LastUpdatedAt = bp.LastUpdatedAt,
                         AuthorId = bp.AuthorId,
-                        CategoryIds = bp.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList()
+                        Categories = bp.BlogPostCategories
+                    .Select(bpc => new CategoryModel
+                    {
+                        Id = bpc.Category.Id,
+                        Name = bpc.Category.Name
+                    }).ToList()
                     }).FirstOrDefaultAsync();
                 return blogPost;
             });
@@ -136,7 +152,7 @@ namespace Infrastructure.Repositories
 
                     // Update categories
                     var existingCategoryIds = existingBlogPost.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList();
-                    var newCategoryIds = blogPost.CategoryIds;
+                    var newCategoryIds = blogPost.Categories.Select(c => c.Id).ToList();
 
                     // Remove old categories
                     var categoriesToRemove = existingBlogPost.BlogPostCategories

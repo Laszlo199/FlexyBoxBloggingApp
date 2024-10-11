@@ -1,11 +1,13 @@
 ﻿@page "/"
+@using BloggingAppFrontend.Application.Dtos
+@using BloggingAppFrontend.Application.Dtos.BlogPsotDto
+@using BloggingAppFrontend.Application.Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject IBlogPostService BlogPostService
 
 <!-- Search and Filter Section -->
 <div class="container mt-5">
-  
-
     <!-- Blog Posts Section -->
     <div class="text-center mb-4">
         <h1 class="display-4 fw-bold text-primary">Latest Blog Posts</h1>
@@ -51,28 +53,28 @@
     </div>
 
     <div class="row g-4">
-        @foreach (var post in FilteredPosts())
+        @if (blogPosts == null)
         {
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow-sm h-100 border-0" style="border-radius: 12px;">
-                    <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
-                        <img src="@post.ImageUrl" class="card-img-top" alt="Blog image" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                    </a>
-                    <div class="card-body">
+            <p>Loading...</p>
+        }
+        else
+        {
+            @foreach (var post in FilteredPosts())
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 border-0" style="border-radius: 12px;">
                         <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
-                            <p class="text-muted mb-1">@post.Date.ToString("MMMM dd, yyyy") • @post.ReadTime min</p>
-                            <p class="text-muted">By @post.Author</p>
-                            <h5 class="card-title text-dark">@post.Title</h5>
-                            <p class="card-text text-secondary">@post.Content.Substring(0, Math.Min(80, post.Content.Length))...</p>
+                            <img src="https://picsum.photos/300/200?random=@post.Id" class="card-img-top" alt="Blog image" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
                         </a>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between align-items-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-chat text-muted"></i>
-                            <span class="ms-1 text-muted">@post.CommentCount</span>
+                        <div class="card-body">
+                            <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
+                                <p class="text-muted mb-1">@post.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                                <p class="text-muted">By @post.AuthorName</p>
+                                <h5 class="card-title text-dark">@post.Title</h5>
+                                <p class="card-text text-secondary">@post.Content.Substring(0, Math.Min(80, post.Content.Length))...</p>
+                            </a>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <i class="@(post.IsLiked ? "bi-heart-fill" : "bi-heart")" @onclick="() => ToggleHeart(post)" style="cursor: pointer; color: @(post.IsLiked ? "red" : "gray")"></i>
+                        <div class="card-footer d-flex justify-content-between align-items-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                             <div class="dropdown">
                                 <i class="bi bi-three-dots-vertical ms-3 text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
@@ -83,60 +85,126 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         }
     </div>
 </div>
 
 @code {
     private string searchTerm = string.Empty;
-    private string selectedCategoryText = "Select Category";
-    private List<string> categories = new List<string> { "Tech", "Lifestyle", "Business", "Travel", "Health" };
-    private List<string> selectedCategories = new List<string>();
 
-    private List<BlogPost> blogPosts = new List<BlogPost>
+    private string selectedCategoryText = "Select Category";
+
+
+
+    // Hardcoded categories
+
+    private List<CategoryDto> categories = new List<CategoryDto>
     {
-        new BlogPost { Id = 1, Title = "The Mistake Every Small Business Makes in Its First Year", Date = new DateTime(2023, 5, 30), ReadTime = 1, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "John Doe", ImageUrl = "https://picsum.photos/300/200?random=1", CommentCount = 0, IsLiked = false, Category = "Business" },
-        new BlogPost { Id = 2, Title = "SEO Tools to Boost Your Sales", Date = new DateTime(2023, 5, 30), ReadTime = 2, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "Jane Smith", ImageUrl = "https://picsum.photos/300/200?random=2", CommentCount = 0, IsLiked = false, Category = "Tech" },
-        new BlogPost { Id = 3, Title = "Finding Ideas for Your Next Podcast", Date = new DateTime(2023, 5, 30), ReadTime = 2, Content = "Create a blog post subtitle that summarizes your post in a few short, punchy sentences...", Author = "Tom Brown", ImageUrl = "https://picsum.photos/300/200?random=3", CommentCount = 0, IsLiked = false, Category = "Lifestyle" },
+        new CategoryDto { Id = 1, Name = "Tech" },
+        new CategoryDto { Id = 2, Name = "Lifestyle" },
+        new CategoryDto { Id = 3, Name = "Business" },
+        new CategoryDto { Id = 4, Name = "Travel" },
+        new CategoryDto { Id = 5, Name = "Health" }
     };
 
-    public class BlogPost
-    {
-        public int Id { get; set; }
-        public required string Title { get; set; }
-        public DateTime Date { get; set; }
-        public int ReadTime { get; set; }
-        public required string Content { get; set; }
-        public required string ImageUrl { get; set; }
-        public required string Author { get; set; }
-        public int CommentCount { get; set; }
-        public bool IsLiked { get; set; }
-        public string Category { get; set; } = string.Empty;
-    }
 
-    private void SelectCategory(string category)
+
+    private List<CategoryDto> selectedCategories = new List<CategoryDto>();
+
+    private List<BlogPostDto>? blogPosts;
+
+    private bool isInitialized = false;
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+
     {
-        if (!selectedCategories.Contains(category))
+
+        if (firstRender)
+
         {
-            selectedCategories.Add(category);
+
+            await LoadBlogPosts();
+
+            isInitialized = true;
+
+            StateHasChanged();
+
         }
+
     }
 
-    private void RemoveCategory(string category)
+
+
+    private async Task LoadBlogPosts()
+
     {
+        var posts = await BlogPostService.GetAllPosts();
+        Console.WriteLine("POST: "+ posts);
+
+        if (posts != null)
+
+        {
+
+            blogPosts = posts.ToList();
+
+        }
+
+        else
+
+        {
+
+            blogPosts = new List<BlogPostDto>();  // Initialize with an empty list if null
+
+        }
+
+
+
+    }
+
+
+
+    private void SelectCategory(CategoryDto category)
+
+    {
+
+        if (!selectedCategories.Any(c => c.Id == category.Id))
+
+        {
+
+            selectedCategories.Add(category);
+
+            selectedCategoryText = category.Name;
+
+        }
+
+    }
+
+
+
+    private void RemoveCategory(CategoryDto category)
+
+    {
+
         selectedCategories.Remove(category);
+
     }
 
-    private IEnumerable<BlogPost> FilteredPosts()
+
+
+    private IEnumerable<BlogPostDto> FilteredPosts()
+
     {
-        return blogPosts
+
+        return blogPosts?
+
             .Where(post => string.IsNullOrEmpty(searchTerm) || post.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-            .Where(post => !selectedCategories.Any() || selectedCategories.Contains(post.Category));
-    }
 
-    private void ToggleHeart(BlogPost post)
-    {
-        post.IsLiked = !post.IsLiked;
+            .Where(post => !selectedCategories.Any() || post.Categories.Any(pc => selectedCategories.Any(sc => sc.Id == pc.Id)))
+
+            ?? Enumerable.Empty<BlogPostDto>();
+
     }
 }
