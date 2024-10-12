@@ -1,4 +1,5 @@
 ﻿using BloggingAppFrontend.Application.Dtos.BlogPsotDto;
+using BloggingAppFrontend.Application.Dtos.BlogPsotDtos;
 
 namespace BloggingAppFrontend.Application.Services
 {
@@ -7,7 +8,7 @@ namespace BloggingAppFrontend.Application.Services
         Task<IEnumerable<BlogPostDto>> GetAllPosts();
         Task<BlogPostDto?> GetPostById(int id);
         Task<bool> CreatePost(CreateBlogPostDto createBlogPostDto);
-        Task<bool> UpdatePost(int id, CreateBlogPostDto createBlogPostDto);
+        Task<bool> UpdatePost(int id, UpdateBlogPostDto updateBlogPostDto);
         Task<bool> DeletePost(int id);
     }
 
@@ -41,9 +42,9 @@ namespace BloggingAppFrontend.Application.Services
             return result != null;
         }
 
-        public async Task<bool> UpdatePost(int id, CreateBlogPostDto createBlogPostDto)
+        public async Task<bool> UpdatePost(int id, UpdateBlogPostDto updateBlogPostDto)
         {
-            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPost/{id}", createBlogPostDto);
+            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPost/{id}", updateBlogPostDto);
             return result != null;
         }
 

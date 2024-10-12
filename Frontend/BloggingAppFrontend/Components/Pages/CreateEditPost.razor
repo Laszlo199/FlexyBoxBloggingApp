@@ -5,6 +5,7 @@
 @rendermode InteractiveServer
 @using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
+@using BloggingAppFrontend.Application.Dtos.BlogPsotDtos
 @using BloggingAppFrontend.Application.Services
 
 <div class="container mt-5">
@@ -74,28 +75,36 @@
     private List<CategoryDto> selectedCategories = new List<CategoryDto>();
     private bool categoriesLoaded = false;
 
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !categoriesLoaded)
         {
-
             allCategories = (await CategoryService.GetAllCategories()).ToList();
             filteredCategories = allCategories;
             categoriesLoaded = true;
             StateHasChanged();
+
+            if (id.HasValue)
+            {
+                isEditMode = true;
+                await LoadPostById(id.Value);
+            }
         }
     }
 
-    private Task<CreateBlogPostDto> LoadPostById(int postId)
+    private async Task LoadPostById(int postId)
     {
-        return Task.FromResult(new CreateBlogPostDto
+        var post = await BlogPostService.GetPostById(postId);
+        blogPostDto = new CreateBlogPostDto
         {
-            Title = "Sample Post",
-            Content = "<p>This is the content of the sample post.</p>",
-            AuthorId = 1,
-            CategoryIds = new List<int> { 1, 2 }
-        });
+            Title = post.Title,
+            Content = post.Content,
+            AuthorId = post.AuthorId,
+            //CategoryIds = post.CategoryIds
+        };
+
+        //selectedCategories = allCategories.Where(c => post.CategoryIds.Contains(c.Id)).ToList();
+        StateHasChanged();
     }
 
     private async Task PublishPost()
@@ -104,7 +113,13 @@
 
         if (isEditMode)
         {
-            await BlogPostService.UpdatePost(id.Value, blogPostDto);
+            var updateBlogPostDto = new UpdateBlogPostDto
+            {
+                Title = blogPostDto.Title,
+                Content = blogPostDto.Content,
+                CategoryIds = blogPostDto.CategoryIds
+            };
+            await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
         }
         else
         {
@@ -142,7 +157,6 @@
         }
 
         filteredCategories.Remove(category);
-
         blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
     }
 
@@ -151,7 +165,6 @@
     {
         selectedCategories.Remove(category);
         filteredCategories.Add(category);
-
         blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
     }
 }

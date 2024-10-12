@@ -1,5 +1,9 @@
 ﻿@page "/post/{PostId:int}"
+@using BloggingAppFrontend.Application.Dtos.BlogPsotDto
+@using BloggingAppFrontend.Application.Services
+@rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject IBlogPostService BlogPostService
 
 <h2 class="text-center my-4">Post Details</h2>
 
@@ -15,7 +19,7 @@ else
         <div class="card mb-4 shadow-sm" style="width: 80%;">
             <div class="card-header">
                 <h3 class="card-title">@post.Title</h3>
-                <p class="text-muted mb-0">@post.Date.ToString("MMMM dd, yyyy")</p>
+                <p class="text-muted mb-0">@post.CreatedAt.ToString("MMMM dd, yyyy")</p>
             </div>
             <div class="card-body">
                 <p class="card-text">@post.Content</p>
@@ -28,32 +32,30 @@ else
 }
 
 @code {
-    [Parameter] public int PostId { get; set; }
+    [Parameter] 
+    public int PostId { get; set; }
+    private BlogPostDto? post;
+    private bool isJSInteropAvailable = false;
 
-    private BlogPost? post;
-
-    private List<BlogPost> blogPosts = new List<BlogPost>
+    //Handle client-side-only logic
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        new BlogPost { Id = 1, Title = "Sample Post 1", Date = DateTime.Now, Content = "Full content for blog post 1." },
-        new BlogPost { Id = 2, Title = "Sample Post 2", Date = DateTime.Now, Content = "Full content for blog post 2." },
-        new BlogPost { Id = 3, Title = "Sample Post 3", Date = DateTime.Now, Content = "Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3.Full content for blog post 3." },
+        if (firstRender)
+        {
+            if (!isJSInteropAvailable)
+            {
 
-    };
+                int id = 1004; // Example PostId
+                post = await BlogPostService.GetPostById(PostId);
 
-    protected override void OnInitialized()
-    {
-        post = blogPosts.FirstOrDefault(p => p.Id == PostId);
+                isJSInteropAvailable = true;
+                StateHasChanged();
+            }
+        }
     }
 
-    private void GoBack(){
+    private void GoBack()
+    {
         Navigation.NavigateTo("/");
-    }
-
-    public class BlogPost
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public DateTime Date { get; set; }
-        public string Content { get; set; }
     }
 }
