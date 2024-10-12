@@ -1,7 +1,9 @@
 ﻿@page "/post-editor/{id:int?}"
 @inject NavigationManager Navigation
 @inject IBlogPostService BlogPostService
-@using Blazored.TextEditor
+@inject ICategoryService CategoryService
+@rendermode InteractiveServer
+@using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
 @using BloggingAppFrontend.Application.Services
 
@@ -16,16 +18,40 @@
                 <input type="text" class="form-control" id="postTitle" @bind="blogPostDto.Title" placeholder="Enter your post title..." required>
             </div>
 
-            <!-- Category Selection -->
-            <div class="mb-3">
-                <label for="categories" class="form-label">Select Categories</label>
-                <select id="categories" class="form-select" multiple @onchange="OnCategoriesSelected">
-                    <option value="1">Technology</option>
-                    <option value="2">Health</option>
-                    <option value="3">Lifestyle</option>
-                    <option value="4">Business</option>
-                </select>
+            <!-- Dropdown with Search -->
+            <div class="dropdown mb-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" @onclick="ToggleDropdown">
+                    Categories
+                </button>
+                <div class="dropdown-menu @dropdownClass">
+                    <input type="text" class="form-control" placeholder="Search..." @bind="categorySearchTerm" @oninput="OnCategorySearch" />
+                    @foreach (var category in filteredCategories)
+                    {
+                        <a class="dropdown-item" href="javascript:void(0)" @onclick="() => SelectCategory(category)">@category.Name</a>
+                    }
+                </div>
             </div>
+
+            <!-- Selected Categories -->
+            <div class="mb-3">
+                <label class="form-label">Selected Categories</label>
+                <div class="d-flex flex-wrap">
+                    @foreach (var category in selectedCategories)
+                    {
+                        <span class="badge bg-info text-dark m-1">
+                            #@category.Name
+                            <button type="button" class="btn-close ms-2" aria-label="Close" @onclick="() => RemoveCategory(category)"></button>
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <!-- Post Content -->
+            <div class="mb-3">
+                <label for="postContent" class="form-label">Post Content</label>
+                <textarea id="postContent" class="form-control" rows="8" @bind="blogPostDto.Content" placeholder="Write your post content..."></textarea>
+            </div>
+
             <!-- Action Buttons -->
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-secondary me-2" @onclick="Cancel">Cancel</button>
@@ -41,18 +67,23 @@
 
     private CreateBlogPostDto blogPostDto = new CreateBlogPostDto();
     private bool isEditMode;
+    private string categorySearchTerm = string.Empty;
+    private string dropdownClass = string.Empty;
+    private List<CategoryDto> allCategories = new List<CategoryDto>();
+    private List<CategoryDto> filteredCategories = new List<CategoryDto>();
+    private List<CategoryDto> selectedCategories = new List<CategoryDto>();
+    private bool categoriesLoaded = false;
 
-    // Blazored Text Editor reference
-    private MarkupString preview;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        isEditMode = id.HasValue;
-
-        if (isEditMode)
+        if (firstRender && !categoriesLoaded)
         {
-            // Load the post for editing
-            blogPostDto = await LoadPostById(id.Value);
+
+            allCategories = (await CategoryService.GetAllCategories()).ToList();
+            filteredCategories = allCategories;
+            categoriesLoaded = true;
+            StateHasChanged();
         }
     }
 
@@ -69,6 +100,8 @@
 
     private async Task PublishPost()
     {
+        blogPostDto.AuthorId = 1;
+
         if (isEditMode)
         {
             await BlogPostService.UpdatePost(id.Value, blogPostDto);
@@ -86,10 +119,39 @@
         Navigation.NavigateTo("/");
     }
 
-    private void OnCategoriesSelected(ChangeEventArgs e)
+    private void ToggleDropdown()
     {
-        // Handle category selection
-        var selectedOptions = ((IEnumerable<string>)e.Value).Select(int.Parse).ToList();
-        blogPostDto.CategoryIds = selectedOptions;
+        dropdownClass = dropdownClass == "show" ? string.Empty : "show";
+    }
+
+    // Filter categories based on search term
+    private void OnCategorySearch(ChangeEventArgs e)
+    {
+        var searchTerm = e.Value.ToString()?.ToLower() ?? string.Empty;
+        filteredCategories = allCategories
+            .Where(c => c.Name.ToLower().Contains(searchTerm) && !selectedCategories.Any(sc => sc.Id == c.Id))
+            .ToList();
+    }
+
+    // Handle category selection
+    private void SelectCategory(CategoryDto category)
+    {
+        if (!selectedCategories.Any(c => c.Id == category.Id))
+        {
+            selectedCategories.Add(category);
+        }
+
+        filteredCategories.Remove(category);
+
+        blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+    }
+
+    // Remove a selected category
+    private void RemoveCategory(CategoryDto category)
+    {
+        selectedCategories.Remove(category);
+        filteredCategories.Add(category);
+
+        blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
     }
 }

@@ -124,21 +124,13 @@
     private async Task LoadBlogPosts()
     {
         var posts = await BlogPostService.GetAllPosts();
-        blogPosts = posts?.ToList();
+        blogPosts = posts?.ToList() ?? new List<BlogPostDto>();
     }
      
     private async Task LoadCategories()
     {
         var fetchedCategories = await CategoryService.GetAllCategories();
-    
-        if (fetchedCategories != null)
-        {
-            categories = fetchedCategories.ToList();
-        }
-        else
-        {
-            categories = new List<CategoryDto>();
-        }
+        categories = fetchedCategories.ToList() ?? new List<CategoryDto>();
     }
 
     private void SelectCategory(CategoryDto category)

@@ -45,7 +45,9 @@ else
         post = blogPosts.FirstOrDefault(p => p.Id == PostId);
     }
 
-    private void GoBack() => Navigation.NavigateTo("/");
+    private void GoBack(){
+        Navigation.NavigateTo("/");
+    }
 
     public class BlogPost
     {
