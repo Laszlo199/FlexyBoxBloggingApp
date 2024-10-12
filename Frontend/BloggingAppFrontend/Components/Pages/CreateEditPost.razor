@@ -69,9 +69,6 @@
 
     private async Task PublishPost()
     {
-        // Get the content from the Blazored Text Editor
-        blogPostDto.Content = await textEditor.GetHTML();
-
         if (isEditMode)
         {
             await BlogPostService.UpdatePost(id.Value, blogPostDto);
