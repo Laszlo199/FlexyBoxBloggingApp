@@ -32,24 +32,24 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task<BlogPostDto?> GetPostById(int id)
         {
-            return await _httpService.Get<BlogPostDto>($"/api/BlogPosts/{id}");
+            return await _httpService.Get<BlogPostDto>($"/api/BlogPost/{id}");
         }
 
         public async Task<bool> CreatePost(BlogPostDto blogPostDto)
         {
-            var result = await _httpService.Post<BlogPostDto>("/api/BlogPosts", blogPostDto);
+            var result = await _httpService.Post<BlogPostDto>("/api/BlogPost", blogPostDto);
             return result != null;
         }
 
         public async Task<bool> UpdatePost(int id, BlogPostDto blogPostDto)
         {
-            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPosts/{id}", blogPostDto);
+            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPost/{id}", blogPostDto);
             return result != null;
         }
 
         public async Task<bool> DeletePost(int id)
         {
-            await _httpService.Delete($"/api/BlogPosts/{id}");
+            await _httpService.Delete($"/api/BlogPost/{id}");
             return true;
         }
     }

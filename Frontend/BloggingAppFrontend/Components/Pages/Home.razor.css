@@ -1,0 +1,36 @@
+﻿.fixed-height-card {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-img-top {
+    height: 300px;
+    object-fit: cover;
+    width: 100%; 
+}
+
+.category-badge {
+    background-color: #ff7043;
+    color: white;
+    border-radius: 12px;
+    padding: 3px 8px;
+    margin-right: 8px;
+    font-size: 0.8rem;
+}
+
+.card-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.three-dots {
+    margin-left: auto; 
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

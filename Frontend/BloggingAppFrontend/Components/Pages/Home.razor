@@ -5,10 +5,10 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IBlogPostService BlogPostService
+@inject ICategoryService CategoryService
 
 <!-- Search and Filter Section -->
 <div class="container mt-5">
-    <!-- Blog Posts Section -->
     <div class="text-center mb-4">
         <h1 class="display-4 fw-bold text-primary">Latest Blog Posts</h1>
         <p class="text-muted">Catch up with our most recent stories and updates!</p>
@@ -27,7 +27,7 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @foreach (var category in categories)
                     {
-                        <li><a class="dropdown-item" @onclick="() => SelectCategory(category)">@category</a></li>
+                        <li><a class="dropdown-item" @onclick="() => SelectCategory(category)">@category.Name</a></li>
                     }
                 </ul>
             </div>
@@ -40,7 +40,7 @@
                 @foreach (var category in selectedCategories)
                 {
                     <span class="badge bg-info me-2">
-                        @category
+                        @category.Name
                         <button type="button" class="btn-close btn-close-white ms-1" aria-label="Close" @onclick="() => RemoveCategory(category)"></button>
                     </span>
                 }
@@ -61,22 +61,33 @@
         {
             @foreach (var post in FilteredPosts())
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-sm h-100 border-0" style="border-radius: 12px;">
+                <div class="col-md-12 col-lg-6">
+                    <!-- 2 cards per row on larger screens -->
+                    <div class="card shadow-sm h-100 border-0 fixed-height-card" style="border-radius: 12px;">
                         <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
-                            <img src="https://picsum.photos/300/200?random=@post.Id" class="card-img-top" alt="Blog image" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                            <img src="https://picsum.photos/600/300?random=@post.Id" class="card-img-top" alt="Blog image" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
                         </a>
                         <div class="card-body">
-                            <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset">
+                            <a href="@($"/post/{post.Id}")" class="text-decoration-none text-reset card-content">
                                 <p class="text-muted mb-1">@post.CreatedAt.ToString("MMMM dd, yyyy")</p>
                                 <p class="text-muted">By @post.AuthorName</p>
-                                <h5 class="card-title text-dark">@post.Title</h5>
-                                <p class="card-text text-secondary">@post.Content.Substring(0, Math.Min(80, post.Content.Length))...</p>
+
+                                <!-- Display Categories with Smaller Badge Style -->
+                                <p class="text-muted">
+                                    @foreach (var category in post.Categories)
+
+                                    {
+                                        <span class="category-badge">#@category.Name</span>
+                                    }
+                                </p>
+
+                                <h5 class="card-title text-dark card-content">@post.Title</h5>
+                                <p class="card-text text-secondary card-content">@post.Content.Substring(0, Math.Min(120, post.Content.Length))...</p>
                             </a>
                         </div>
-                        <div class="card-footer d-flex justify-content-between align-items-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                            <div class="dropdown">
-                                <i class="bi bi-three-dots-vertical ms-3 text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                        <div class="card-footer">
+                            <div class="dropdown three-dots">
+                                <i class="bi bi-three-dots-vertical text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                     <li><a class="dropdown-item" href="@($"/post-editor/{post.Id}")">Edit</a></li>
                                     <li><a class="dropdown-item" href="#">Delete</a></li>
@@ -92,119 +103,64 @@
 
 @code {
     private string searchTerm = string.Empty;
-
     private string selectedCategoryText = "Select Category";
-
-
-
-    // Hardcoded categories
-
-    private List<CategoryDto> categories = new List<CategoryDto>
-    {
-        new CategoryDto { Id = 1, Name = "Tech" },
-        new CategoryDto { Id = 2, Name = "Lifestyle" },
-        new CategoryDto { Id = 3, Name = "Business" },
-        new CategoryDto { Id = 4, Name = "Travel" },
-        new CategoryDto { Id = 5, Name = "Health" }
-    };
-
-
-
+    private List<CategoryDto> categories = new List<CategoryDto>();
     private List<CategoryDto> selectedCategories = new List<CategoryDto>();
-
     private List<BlogPostDto>? blogPosts;
-
     private bool isInitialized = false;
 
-
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
-
     {
-
         if (firstRender)
-
         {
-
             await LoadBlogPosts();
-
+            await LoadCategories();
             isInitialized = true;
-
             StateHasChanged();
-
         }
-
     }
-
 
 
     private async Task LoadBlogPosts()
-
     {
         var posts = await BlogPostService.GetAllPosts();
-        Console.WriteLine("POST: "+ posts);
-
-        if (posts != null)
-
-        {
-
-            blogPosts = posts.ToList();
-
-        }
-
-        else
-
-        {
-
-            blogPosts = new List<BlogPostDto>();  // Initialize with an empty list if null
-
-        }
-
-
-
+        blogPosts = posts?.ToList();
     }
-
-
+     
+    private async Task LoadCategories()
+    {
+        var fetchedCategories = await CategoryService.GetAllCategories();
+    
+        if (fetchedCategories != null)
+        {
+            categories = fetchedCategories.ToList();
+        }
+        else
+        {
+            categories = new List<CategoryDto>();
+        }
+    }
 
     private void SelectCategory(CategoryDto category)
-
     {
-
         if (!selectedCategories.Any(c => c.Id == category.Id))
-
         {
-
             selectedCategories.Add(category);
-
             selectedCategoryText = category.Name;
-
         }
-
     }
-
-
 
     private void RemoveCategory(CategoryDto category)
-
     {
-
         selectedCategories.Remove(category);
-
     }
 
-
-
     private IEnumerable<BlogPostDto> FilteredPosts()
-
     {
-
         return blogPosts?
 
             .Where(post => string.IsNullOrEmpty(searchTerm) || post.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-
             .Where(post => !selectedCategories.Any() || post.Categories.Any(pc => selectedCategories.Any(sc => sc.Id == pc.Id)))
-
             ?? Enumerable.Empty<BlogPostDto>();
-
     }
 }

@@ -19,12 +19,17 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task<IEnumerable<CategoryDto>> GetAllCategories()
         {
-            return await _httpService.Get<IEnumerable<CategoryDto>>("/api/Categories");
+            var response = await _httpService.Get<IEnumerable<CategoryDto>>("/api/Category");
+            if (response == null)
+            {
+                Console.WriteLine("No data received from the backend.");
+            }
+            return response;
         }
 
         public async Task<CategoryDto?> GetCategoryById(int id)
         {
-            return await _httpService.Get<CategoryDto>($"/api/Categories/{id}");
+            return await _httpService.Get<CategoryDto>($"/api/Category/{id}");
         }
     }
 }
