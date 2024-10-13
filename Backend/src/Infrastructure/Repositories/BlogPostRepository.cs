@@ -138,58 +138,70 @@ namespace Infrastructure.Repositories
 
         public async Task<BlogPostModel?> Update(BlogPostModel blogPost)
         {
-            return await ExecuteWithExceptionHandling(async () =>
+            var existingBlogPost = await _ctx.blogPosts
+                .Include(bp => bp.BlogPostCategories)
+                .ThenInclude(bpc => bpc.Category)
+                .FirstOrDefaultAsync(bp => bp.Id == blogPost.Id);
+
+            if (existingBlogPost == null)
             {
-                using var transaction = await _ctx.Database.BeginTransactionAsync();
+                return null;
+            }
 
-                try
+            // Update basic properties
+            existingBlogPost.Title = blogPost.Title;
+            existingBlogPost.Content = blogPost.Content;
+            existingBlogPost.LastUpdatedAt = DateTime.UtcNow;
+
+            // Update categories
+            var existingCategoryIds = existingBlogPost.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList();
+            var newCategoryIds = blogPost.CategoryIds;
+
+            // Remove old categories that are not in the new list
+            var categoriesToRemove = existingBlogPost.BlogPostCategories
+                .Where(bpc => !newCategoryIds.Contains(bpc.CategoryId))
+                .ToList();
+            foreach (var categoryToRemove in categoriesToRemove)
+            {
+                existingBlogPost.BlogPostCategories.Remove(categoryToRemove);
+            }
+
+            // Add new categories that are not in the existing list
+            var categoriesToAdd = newCategoryIds
+                .Where(categoryId => !existingCategoryIds.Contains(categoryId))
+                .Select(categoryId => new BlogPostCategory
                 {
-                    var existingBlogPost = await _ctx.blogPosts
-                        .Include(bp => bp.BlogPostCategories)
-                        .FirstOrDefaultAsync(bp => bp.Id == blogPost.Id);
+                    BlogPostId = blogPost.Id,
+                    CategoryId = categoryId
+                })
+                .ToList();
+            foreach (var categoryToAdd in categoriesToAdd)
+            {
+                existingBlogPost.BlogPostCategories.Add(categoryToAdd);
+            }
 
-                    if (existingBlogPost == null)
-                    {
-                        return null;
-                    }
+            // Save changes
+            await _ctx.SaveChangesAsync();
 
-                    existingBlogPost.Title = blogPost.Title;
-                    existingBlogPost.Content = blogPost.Content;
-                    existingBlogPost.LastUpdatedAt = DateTime.UtcNow;
-
-                    // Update categories
-                    var existingCategoryIds = existingBlogPost.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList();
-                    var newCategoryIds = blogPost.Categories.Select(c => c.Id).ToList();
-
-                    // Remove old categories
-                    var categoriesToRemove = existingBlogPost.BlogPostCategories
-                        .Where(bpc => !newCategoryIds.Contains(bpc.CategoryId))
-                        .ToList();
-                    _ctx.BlogPostCategories.RemoveRange(categoriesToRemove);
-
-                    // Add new categories
-                    var categoriesToAdd = newCategoryIds
-                        .Where(categoryId => !existingCategoryIds.Contains(categoryId))
-                        .Select(categoryId => new BlogPostCategory
-                        {
-                            BlogPostId = existingBlogPost.Id,
-                            CategoryId = categoryId
-                        })
-                        .ToList();
-                    await _ctx.BlogPostCategories.AddRangeAsync(categoriesToAdd);
-
-                    await _ctx.SaveChangesAsync();
-                    await transaction.CommitAsync();
-
-                    return blogPost;
-                }
-                catch
+            // Map the updated BlogPost entity to BlogPostModel
+            var updatedBlogPostModel = new BlogPostModel
+            {
+                Id = existingBlogPost.Id,
+                Title = existingBlogPost.Title,
+                Content = existingBlogPost.Content,
+                CreatedAt = existingBlogPost.CreatedAt,
+                LastUpdatedAt = existingBlogPost.LastUpdatedAt,
+                AuthorId = existingBlogPost.AuthorId,
+                AuthorName = existingBlogPost.User.Username,
+                CategoryIds = existingBlogPost.BlogPostCategories.Select(bpc => bpc.CategoryId).ToList(),
+                Categories = existingBlogPost.BlogPostCategories.Select(bpc => new CategoryModel
                 {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-            });
+                    Id = bpc.Category.Id,
+                    Name = bpc.Category.Name
+                }).ToList()
+            };
+
+            return updatedBlogPostModel;
         }
-
     }
 }
