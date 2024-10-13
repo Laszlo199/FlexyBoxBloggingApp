@@ -13,13 +13,12 @@
 
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <!-- Post Title -->
+
             <div class="mb-3">
                 <label for="postTitle" class="form-label">Post Title</label>
                 <input type="text" class="form-control" id="postTitle" @bind="blogPostDto.Title" placeholder="Enter your post title..." required>
             </div>
 
-            <!-- Dropdown with Search -->
             <div class="dropdown mb-3">
                 <button class="btn btn-secondary dropdown-toggle" type="button" @onclick="ToggleDropdown">
                     Categories
@@ -33,7 +32,6 @@
                 </div>
             </div>
 
-            <!-- Selected Categories -->
             <div class="mb-3">
                 <label class="form-label">Selected Categories</label>
                 <div class="d-flex flex-wrap">
@@ -47,13 +45,11 @@
                 </div>
             </div>
 
-            <!-- Post Content -->
             <div class="mb-3">
                 <label for="postContent" class="form-label">Post Content</label>
                 <textarea id="postContent" class="form-control" rows="8" @bind="blogPostDto.Content" placeholder="Write your post content..."></textarea>
             </div>
 
-            <!-- Action Buttons -->
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-secondary me-2" @onclick="Cancel">Cancel</button>
                 <button type="button" class="btn btn-primary" @onclick="PublishPost">Publish</button>

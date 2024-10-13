@@ -44,8 +44,6 @@ else
         {
             if (!isJSInteropAvailable)
             {
-
-                int id = 1004; // Example PostId
                 post = await BlogPostService.GetPostById(PostId);
 
                 isJSInteropAvailable = true;
