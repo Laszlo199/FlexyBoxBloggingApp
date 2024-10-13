@@ -9,6 +9,7 @@
         public DateTime? LastUpdatedAt { get; set; }
         public int AuthorId { get; set; }
         public string AuthorName { get; set; }
+        public List<int> CategoryIds { get; set; } = new List<int>();
         public List<CategoryModel> Categories { get; set; } = new List<CategoryModel>();
     }
 }

@@ -42,16 +42,23 @@ namespace Infrastructure.Repositories
                 await _ctx.blogPosts.AddAsync(newPost);
                 await _ctx.SaveChangesAsync();
 
-                var blogPostCategories = blogPost.Categories.Select(category => new BlogPostCategory
+                var blogPostCategories = blogPost.CategoryIds.Select(categoryId => new BlogPostCategory
                 {
                     BlogPostId = newPost.Id,
-                    CategoryId = category.Id
+                    CategoryId = categoryId
                 }).ToList();
 
                 await _ctx.BlogPostCategories.AddRangeAsync(blogPostCategories);
                 await _ctx.SaveChangesAsync();
 
                 blogPost.Id = newPost.Id;
+                blogPost.CreatedAt = newPost.CreatedAt;
+
+                blogPost.Categories = blogPostCategories.Select(bpc => new CategoryModel
+                {
+                    Id = bpc.CategoryId,
+                    Name = _ctx.categories.FirstOrDefault(c => c.Id == bpc.CategoryId)?.Name
+                }).ToList();
 
                 return blogPost;
             });

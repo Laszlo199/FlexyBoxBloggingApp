@@ -91,15 +91,15 @@
     private async Task LoadPostById(int postId)
     {
         var post = await BlogPostService.GetPostById(postId);
-        blogPostDto = new CreateBlogPostDto
+        blogPostDto= new CreateBlogPostDto
         {
             Title = post.Title,
             Content = post.Content,
             AuthorId = post.AuthorId,
-            //CategoryIds = post.CategoryIds
+            CategoryIds = post.Categories.Select(c => c.Id).ToList()
         };
 
-        //selectedCategories = allCategories.Where(c => post.CategoryIds.Contains(c.Id)).ToList();
+        selectedCategories = post.Categories;
         StateHasChanged();
     }
 
@@ -113,12 +113,13 @@
             {
                 Title = blogPostDto.Title,
                 Content = blogPostDto.Content,
-                CategoryIds = blogPostDto.CategoryIds
+                CategoryIds = selectedCategories.Select(c => c.Id).ToList()
             };
             await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
         }
         else
         {
+            blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
             await BlogPostService.CreatePost(blogPostDto);
         }
 
