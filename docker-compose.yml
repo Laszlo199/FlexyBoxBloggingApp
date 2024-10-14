@@ -1,10 +1,21 @@
-﻿version: '3.8'
+﻿#Maybe later I will add a docker-compose.override.yml file for development purposes
+version: '3.8'
 
 services:
-  webapi:
-    image: webapi:latest
+  backend:
     build:
-      context: .
-      dockerfile: WebApi/Dockerfile
+      context: ./Backend/src/WebApi
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Database=YourDatabase;User Id=your_user;Password=your_password;
+
+  frontend:
+    build:
+      context: ./Frontend/BloggingAppFrontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8081:81"
