@@ -1,34 +1,46 @@
-﻿@using BloggingAppFrontend.Components.Shared
+﻿@using BloggingAppFrontend.Application.AuthGuard
+@using BloggingAppFrontend.Components.Shared
 @using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 
-<div>
-    <div class="header">
-        <HeaderMenu />
-    </div>
-        <main>
-            <div class="top-row px-4">
-                <AuthorizeView>
-                    <Authorized>
-                        <div>Hello!</div>
-                    </Authorized>
-                    <NotAuthorized>
-                        <div>You're not authorized.</div>
-                    </NotAuthorized>
-                </AuthorizeView>
-                <a href="login">login</a>
-            </div>
+@if (IsShowContent)
+{
+    <div>
+        <div class="header">
+            <HeaderMenu />
+        </div>
 
+        <main>
             <article class="content px-4">
                 @Body
             </article>
         </main>
-</div>
+    </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+}
+
+@code {
+    public bool IsShowContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await ((CustomAuthStateProvider)AuthStateProvider).GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            IsShowContent = true;
+        }
+    }
+}

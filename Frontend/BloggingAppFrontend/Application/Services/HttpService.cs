@@ -1,6 +1,8 @@
 ﻿using Blazored.Toast.Services;
+using BloggingAppFrontend.Application.AuthGuard;
 using BloggingAppFrontend.Application.Dtos.AuthDtos;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Net;
 using System.Net.Http.Headers;
@@ -25,6 +27,7 @@ namespace BloggingAppFrontend.Application.Services
         private HttpClient _httpClient;
         private NavigationManager _navigationManager;
         private ProtectedLocalStorage _localStorage;
+        private AuthenticationStateProvider _authStateProvider;
         private IConfiguration _configuration;
         private IToastService _toastService;
 
@@ -32,6 +35,7 @@ namespace BloggingAppFrontend.Application.Services
             HttpClient httpClient,
             NavigationManager navigationManager,
             ProtectedLocalStorage localStorage,
+            AuthenticationStateProvider authStateProvider,
             IConfiguration configuration,
             IToastService toastService)
         {
@@ -40,6 +44,7 @@ namespace BloggingAppFrontend.Application.Services
             _localStorage = localStorage;
             _configuration = configuration;
             _toastService = toastService;
+            _authStateProvider = authStateProvider;
         }
 
         public async Task<T?> Get<T>(string uri)
@@ -110,7 +115,7 @@ namespace BloggingAppFrontend.Application.Services
             // auto logout on 401 response
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                _navigationManager.NavigateTo("login");
+                await ((CustomAuthStateProvider)_authStateProvider).MarkUserAsLoggedOut();
                 return default!;
             }
 
@@ -144,7 +149,7 @@ namespace BloggingAppFrontend.Application.Services
             // auto logout on 401 response
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                _navigationManager.NavigateTo("logout");
+                await ((CustomAuthStateProvider)_authStateProvider).MarkUserAsLoggedOut();
             }
 
             // throw exception on error response
