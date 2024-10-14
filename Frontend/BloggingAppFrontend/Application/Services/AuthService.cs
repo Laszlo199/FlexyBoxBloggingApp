@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using BloggingAppFrontend.Application.AuthGuard;
 using BloggingAppFrontend.Application.Dtos.AuthDtos;
 using Microsoft.AspNetCore.Components;
 
@@ -7,7 +8,6 @@ namespace BloggingAppFrontend.Application.Services
     public interface IAuthService
     {
         TokenDto? TokenDto { get; }
-        Task Initialize();
         Task<bool> Register(RegisterDto registerDto);
         Task<bool> Login(LoginDto loginDto);
         Task Logout();
@@ -15,26 +15,25 @@ namespace BloggingAppFrontend.Application.Services
 
     public class AuthService : IAuthService
     {
-        private IHttpService _httpService;
-        private NavigationManager _navigationManager;
-        private ILocalStorageService _localStorageService;
+        private readonly IHttpService _httpService;
+        private readonly NavigationManager _navigationManager;
+        private readonly ILocalStorageService _localStorageService;
+        private readonly CustomAuthStateProvider _authStateProvider;
         public TokenDto? TokenDto { get; private set; }
 
         public AuthService(
             IHttpService httpService,
             NavigationManager navigationManager,
-            ILocalStorageService localStorageService
+            ILocalStorageService localStorageService,
+            CustomAuthStateProvider authStateProvider
         )
         {
             _httpService = httpService;
             _navigationManager = navigationManager;
             _localStorageService = localStorageService;
+            _authStateProvider = authStateProvider;
         }
 
-        public async Task Initialize()
-        {
-            TokenDto = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
-        }
 
         public async Task<bool> Register(RegisterDto registerDto)
         {
@@ -49,7 +48,8 @@ namespace BloggingAppFrontend.Application.Services
             {
                 return false;
             }
-            await _localStorageService.SetItemAsync("tokenDto", TokenDto);
+
+            await _authStateProvider.MarkUserAsAuthenticated(TokenDto);
             return true;
         }
 
@@ -65,14 +65,15 @@ namespace BloggingAppFrontend.Application.Services
             {
                 return false;
             }
-            await _localStorageService.SetItemAsync("tokenDto", TokenDto);
+        
+            await _authStateProvider.MarkUserAsAuthenticated(TokenDto);
             return true;
         }
 
         public async Task Logout()
         {
             TokenDto = null;
-            await _localStorageService.RemoveItemAsync("tokenDto");
+            await _authStateProvider.MarkUserAsLoggedOut();
             _navigationManager.NavigateTo("login");
         }
     }

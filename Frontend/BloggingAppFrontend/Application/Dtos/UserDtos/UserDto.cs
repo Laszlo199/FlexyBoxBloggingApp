@@ -1,4 +1,4 @@
-﻿namespace Application.Dtos.UserDtos
+﻿namespace BloggingAppFrontend.Application.Dtos.UserDtos
 {
     public class UserDto
     {

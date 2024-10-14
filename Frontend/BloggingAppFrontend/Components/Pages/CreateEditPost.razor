@@ -1,0 +1,210 @@
+﻿@page "/post-editor/{id:int?}"
+@inject NavigationManager Navigation
+@inject IBlogPostService BlogPostService
+@inject ICategoryService CategoryService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject IToastService ToastService
+@rendermode InteractiveServer
+@using Blazored.Toast.Services
+@using BloggingAppFrontend.Application.AuthGuard
+@using BloggingAppFrontend.Application.Dtos
+@using BloggingAppFrontend.Application.Dtos.BlogPsotDto
+@using BloggingAppFrontend.Application.Dtos.BlogPsotDtos
+@using BloggingAppFrontend.Application.Services
+@using System.ComponentModel.DataAnnotations
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">@((isEditMode ? "Edit Post" : "Create a New Post"))</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <EditForm Model="@blogPostDto">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="postTitle" class="form-label">Post Title</label>
+                    <InputText id="postTitle" class="form-control" @bind-Value="blogPostDto.Title" placeholder="Enter your post title..." />
+                    <ValidationMessage For="@(() => blogPostDto.Title)" />
+                </div>
+
+                <div class="dropdown mb-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" @onclick="ToggleDropdown">
+                        Categories
+                    </button>
+                    <div class="dropdown-menu @dropdownClass">
+                        <input type="text" class="form-control" placeholder="Search..." @bind="categorySearchTerm" @oninput="OnCategorySearch" />
+                        @foreach (var category in filteredCategories)
+                        {
+                            <a class="dropdown-item" href="javascript:void(0)" @onclick="() => SelectCategory(category)">@category.Name</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Selected Categories</label>
+                    <div class="d-flex flex-wrap">
+                        @foreach (var category in selectedCategories)
+                        {
+                            <span class="badge bg-info text-dark m-1">
+                                #@category.Name
+                                <button type="button" class="btn-close ms-2" aria-label="Close" @onclick="() => RemoveCategory(category)"></button>
+                            </span>
+                        }
+                    </div>
+                    @if (!selectedCategories.Any())
+                    {
+                        <div class="text-danger">At least one category is required</div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label for="postContent" class="form-label">Post Content</label>
+                    <InputTextArea id="postContent" class="form-control" rows="8" @bind-Value="blogPostDto.Content" placeholder="Write your post content..." />
+                    <ValidationMessage For="@(() => blogPostDto.Content)" />
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" @onclick="Cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="PublishPost">Publish</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    private CreateBlogPostDto blogPostDto = new CreateBlogPostDto();
+    private bool isEditMode;
+    private string categorySearchTerm = string.Empty;
+    private string dropdownClass = string.Empty;
+    private List<CategoryDto> allCategories = new List<CategoryDto>();
+    private List<CategoryDto> filteredCategories = new List<CategoryDto>();
+    private List<CategoryDto> selectedCategories = new List<CategoryDto>();
+    private bool categoriesLoaded = false;
+    private int? loggedInUserId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !categoriesLoaded)
+        {
+            allCategories = (await CategoryService.GetAllCategories()).ToList();
+            filteredCategories = allCategories;
+            categoriesLoaded = true;
+            StateHasChanged();
+
+            loggedInUserId = await AuthStateProvider.GetUserIdFromSessionState();
+            Console.WriteLine($"Logged in user ID: {loggedInUserId}");
+
+            if (id.HasValue)
+            {
+                isEditMode = true;
+                await LoadPostById(id.Value);
+            }
+        }
+    }
+
+    private async Task LoadPostById(int postId)
+    {
+        var post = await BlogPostService.GetPostById(postId);
+        blogPostDto = new CreateBlogPostDto
+        {
+            Title = post.Title,
+            Content = post.Content,
+            AuthorId = post.AuthorId,
+            CategoryIds = post.Categories.Select(c => c.Id).ToList()
+        };
+
+        selectedCategories = post.Categories;
+        StateHasChanged();
+    }
+
+     private async Task PublishPost()
+    {
+        if (loggedInUserId.HasValue)
+        {
+            blogPostDto.AuthorId = loggedInUserId.Value;
+
+            // Validate the form
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(blogPostDto);
+            bool isValid = Validator.TryValidateObject(blogPostDto, validationContext, validationResults, true);
+
+            if (!isValid || !selectedCategories.Any())
+            {
+                if (!selectedCategories.Any())
+                {
+                    validationResults.Add(new ValidationResult("At least one category is required", new[] { nameof(selectedCategories) }));
+                }
+
+                foreach (var validationResult in validationResults)
+                {
+                    ToastService.ShowError(validationResult.ErrorMessage);
+                }
+                return;
+            }
+
+            if (isEditMode)
+            {
+                var updateBlogPostDto = new UpdateBlogPostDto
+                {
+                    Title = blogPostDto.Title,
+                    Content = blogPostDto.Content,
+                    CategoryIds = selectedCategories.Select(c => c.Id).ToList()
+                };
+                await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
+                ToastService.ShowSuccess($"Blog Post Updated {updateBlogPostDto.Title}");
+            }
+            else
+            {
+                blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+                await BlogPostService.CreatePost(blogPostDto);
+                ToastService.ShowSuccess($"Blog Post Created {blogPostDto.Title}");
+            }
+
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void ToggleDropdown()
+    {
+        dropdownClass = dropdownClass == "show" ? string.Empty : "show";
+    }
+
+    // Filter categories based on search term
+    private void OnCategorySearch(ChangeEventArgs e)
+    {
+        var searchTerm = e.Value.ToString()?.ToLower() ?? string.Empty;
+        filteredCategories = allCategories
+            .Where(c => c.Name.ToLower().Contains(searchTerm) && !selectedCategories.Any(sc => sc.Id == c.Id))
+            .ToList();
+    }
+
+    // Handle category selection
+    private void SelectCategory(CategoryDto category)
+    {
+        if (!selectedCategories.Any(c => c.Id == category.Id))
+        {
+            selectedCategories.Add(category);
+        }
+
+        filteredCategories.Remove(category);
+        blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+    }
+
+    // Remove a selected category
+    private void RemoveCategory(CategoryDto category)
+    {
+        selectedCategories.Remove(category);
+        filteredCategories.Add(category);
+        blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+    }
+}

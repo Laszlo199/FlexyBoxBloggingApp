@@ -1,4 +1,5 @@
 ﻿using BloggingAppFrontend.Application.Dtos.BlogPsotDto;
+using BloggingAppFrontend.Application.Dtos.BlogPsotDtos;
 
 namespace BloggingAppFrontend.Application.Services
 {
@@ -6,8 +7,8 @@ namespace BloggingAppFrontend.Application.Services
     {
         Task<IEnumerable<BlogPostDto>> GetAllPosts();
         Task<BlogPostDto?> GetPostById(int id);
-        Task<bool> CreatePost(BlogPostDto blogPostDto);
-        Task<bool> UpdatePost(int id, BlogPostDto blogPostDto);
+        Task<bool> CreatePost(CreateBlogPostDto createBlogPostDto);
+        Task<bool> UpdatePost(int id, UpdateBlogPostDto updateBlogPostDto);
         Task<bool> DeletePost(int id);
     }
 
@@ -22,29 +23,34 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task<IEnumerable<BlogPostDto>> GetAllPosts()
         {
-            return await _httpService.Get<IEnumerable<BlogPostDto>>("/api/BlogPosts");
+            var response = await _httpService.Get<IEnumerable<BlogPostDto>>("/api/BlogPost");
+            if (response == null)
+            {
+                Console.WriteLine("No data received from the backend.");
+            }
+            return response;
         }
 
         public async Task<BlogPostDto?> GetPostById(int id)
         {
-            return await _httpService.Get<BlogPostDto>($"/api/BlogPosts/{id}");
+            return await _httpService.Get<BlogPostDto>($"/api/BlogPost/{id}");
         }
 
-        public async Task<bool> CreatePost(BlogPostDto blogPostDto)
+        public async Task<bool> CreatePost(CreateBlogPostDto createBlogPostDto)
         {
-            var result = await _httpService.Post<BlogPostDto>("/api/BlogPosts", blogPostDto);
+            var result = await _httpService.Post<BlogPostDto>("/api/BlogPost", createBlogPostDto);
             return result != null;
         }
 
-        public async Task<bool> UpdatePost(int id, BlogPostDto blogPostDto)
+        public async Task<bool> UpdatePost(int id, UpdateBlogPostDto updateBlogPostDto)
         {
-            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPosts/{id}", blogPostDto);
+            var result = await _httpService.Put<BlogPostDto>($"/api/BlogPost/{id}", updateBlogPostDto);
             return result != null;
         }
 
         public async Task<bool> DeletePost(int id)
         {
-            await _httpService.Delete($"/api/BlogPosts/{id}");
+            await _httpService.Delete($"/api/BlogPost/{id}");
             return true;
         }
     }

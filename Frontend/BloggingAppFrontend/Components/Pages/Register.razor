@@ -1,0 +1,56 @@
+﻿@page "/register"
+@using BloggingAppFrontend.Application.Dtos.AuthDtos
+@using BloggingAppFrontend.Application.Services
+@using BloggingAppFrontend.Components.Layout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@layout AuthLayout
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <InputText id="email" type="email" class="form-control" @bind-Value="registerModel.Email" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <InputText id="username" class="form-control" @bind-Value="registerModel.Username" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Sign up</button>
+                    </EditForm>
+                    <div class="mt-3 text-center">
+                        <span>Already have an account?</span>
+                        <a href="/login" class="btn btn-link">Sign in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterDto registerModel = new RegisterDto();
+
+    private async Task HandleRegister()
+    {
+        var success = await AuthService.Register(registerModel);
+
+        if (success)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+}
