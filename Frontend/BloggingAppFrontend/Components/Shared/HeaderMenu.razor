@@ -1,6 +1,11 @@
-﻿@inject NavigationManager Navigation
+﻿@using BloggingAppFrontend.Application.AuthGuard
+@using BloggingAppFrontend.Application.Dtos.UserDtos
+@using BloggingAppFrontend.Application.Services
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject IUserService UserService
 @rendermode InteractiveServer
-@attribute [StreamRendering]
 
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -45,15 +50,29 @@
 @code {
     private bool isAuthenticated = false;
     private string userName = "User";
+    private int? loggedInUserId;
+    private UserDto? user;
 
     protected override async Task OnInitializedAsync()
     {
-        // Logic to check if user is authenticated
-        // and to get the user's name
+
+        loggedInUserId = await AuthStateProvider.GetUserIdFromSessionState();
+
+
+
+        if (loggedInUserId is not null)
+
+        {
+
+            user = await UserService.GetUserById(loggedInUserId.Value);
+            userName = user.Username;
+            isAuthenticated = true;
+        }
     }
 
     private async Task Logout()
     {
+        await AuthService.Logout();
         Navigation.NavigateTo("/login");
     }
 }

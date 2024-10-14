@@ -17,6 +17,7 @@ namespace BloggingAppFrontend.Application.Extension
             services.AddTransient<IHttpService, HttpService>();
             services.AddTransient<IBlogPostService, BlogPostService>();
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             #endregion
 
@@ -25,7 +26,7 @@ namespace BloggingAppFrontend.Application.Extension
             services.AddAuthentication();
             services.AddScoped<ProtectedLocalStorage>();
 
-            // Register CustomAuthStateProvider before AuthService
+            // Register CustomAuthStateProvider
             services.AddScoped<CustomAuthStateProvider>();
 
             // Register AuthenticationStateProvider as CustomAuthStateProvider
