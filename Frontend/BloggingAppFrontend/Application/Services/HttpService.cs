@@ -137,7 +137,7 @@ namespace BloggingAppFrontend.Application.Services
             var token = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
             var isApiUrl = !request.RequestUri?.IsAbsoluteUri;
             if (token != null && isApiUrl != null && isApiUrl.Value)
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Jwt);
+                request.Headers.Authorization = new AuthenticationHeaderValue(token.Jwt);
 
             using var response = await _httpClient.SendAsync(request);
 

@@ -33,6 +33,9 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task Initialize()
         {
+            if (TokenDto != null)
+                return;
+
             TokenDto = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
         }
 
