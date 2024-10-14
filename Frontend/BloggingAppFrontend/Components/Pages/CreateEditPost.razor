@@ -2,7 +2,9 @@
 @inject NavigationManager Navigation
 @inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
+@inject CustomAuthStateProvider AuthStateProvider
 @rendermode InteractiveServer
+@using BloggingAppFrontend.Application.AuthGuard
 @using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDtos
@@ -70,6 +72,7 @@
     private List<CategoryDto> filteredCategories = new List<CategoryDto>();
     private List<CategoryDto> selectedCategories = new List<CategoryDto>();
     private bool categoriesLoaded = false;
+    private int? loggedInUserId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -79,6 +82,9 @@
             filteredCategories = allCategories;
             categoriesLoaded = true;
             StateHasChanged();
+
+            loggedInUserId = await AuthStateProvider.GetUserIdFromSessionState();
+            Console.WriteLine($"Logged in user ID: {loggedInUserId}");
 
             if (id.HasValue)
             {
@@ -91,7 +97,7 @@
     private async Task LoadPostById(int postId)
     {
         var post = await BlogPostService.GetPostById(postId);
-        blogPostDto= new CreateBlogPostDto
+        blogPostDto = new CreateBlogPostDto
         {
             Title = post.Title,
             Content = post.Content,
@@ -105,25 +111,33 @@
 
     private async Task PublishPost()
     {
-        blogPostDto.AuthorId = 1;
-
-        if (isEditMode)
+        if (loggedInUserId.HasValue)
         {
-            var updateBlogPostDto = new UpdateBlogPostDto
+            blogPostDto.AuthorId = loggedInUserId.Value;
+
+            if (isEditMode)
             {
-                Title = blogPostDto.Title,
-                Content = blogPostDto.Content,
-                CategoryIds = selectedCategories.Select(c => c.Id).ToList()
-            };
-            await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
+                var updateBlogPostDto = new UpdateBlogPostDto
+                {
+                    Title = blogPostDto.Title,
+                    Content = blogPostDto.Content,
+                    CategoryIds = selectedCategories.Select(c => c.Id).ToList()
+                };
+                await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
+            }
+            else
+            {
+                blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+                await BlogPostService.CreatePost(blogPostDto);
+            }
+
+            Navigation.NavigateTo("/");
         }
         else
         {
-            blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
-            await BlogPostService.CreatePost(blogPostDto);
+            // Handle the case where the user is not logged in
+            Console.WriteLine("User is not logged in.");
         }
-
-        Navigation.NavigateTo("/");
     }
 
     private void Cancel()

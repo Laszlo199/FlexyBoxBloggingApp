@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BloggingAppFrontend.Application.AuthGuard
 @using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
 @using BloggingAppFrontend.Application.Services
@@ -8,6 +9,7 @@
 @inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
 @inject IAuthService AuthService
+@inject CustomAuthStateProvider AuthStateProvider
 
 <!-- Search and Filter Section -->
 <div class="container mt-5">
@@ -86,14 +88,21 @@
                                 <p class="card-text text-secondary card-content">@post.Content.Substring(0, Math.Min(120, post.Content.Length))...</p>
                             </a>
                         </div>
-                        <div class="card-footer">
-                            <div class="dropdown three-dots">
-                                <i class="bi bi-three-dots-vertical text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="@($"/post-editor/{post.Id}")">Edit</a></li>
-                                    <li><a class="dropdown-item" @onclick="() => DeletePost(post.Id)">Delete</a></li>
-                                </ul>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="@(likedPosts.Contains(post.Id) ? "bi bi-heart-fill" : "bi bi-heart")" @onclick="() => ToggleHeart(post.Id)" style="cursor: pointer; color: red;"></i>
+                                <i class="bi bi-share ms-3" style="cursor: pointer;"></i>
                             </div>
+                            @if (post.AuthorId == loggedInUserId)
+                            {
+                                <div class="dropdown three-dots" style="flex-shrink: 0;">
+                                    <i class="bi bi-three-dots-vertical text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" href="@($"/post-editor/{post.Id}")">Edit</a></li>
+                                        <li><a class="dropdown-item" @onclick="() => DeletePost(post.Id)">Delete</a></li>
+                                    </ul>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -108,15 +117,17 @@
     private List<CategoryDto> categories = new List<CategoryDto>();
     private List<CategoryDto> selectedCategories = new List<CategoryDto>();
     private List<BlogPostDto>? blogPosts;
-    private bool isInitialized = false;
+    private int? loggedInUserId;
+    private HashSet<int> likedPosts = new HashSet<int>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            loggedInUserId = await AuthStateProvider.GetUserIdFromSessionState();
+            Console.WriteLine($"Logged in user ID: {loggedInUserId}");
             await LoadBlogPosts();
             await LoadCategories();
-            isInitialized = true;
             StateHasChanged();
         }
     }
@@ -162,6 +173,18 @@
         {
             blogPosts = blogPosts?.Where(post => post.Id != postId).ToList();
             StateHasChanged();
+        }
+    }
+
+    private void ToggleHeart(int postId)
+    {
+        if (likedPosts.Contains(postId))
+        {
+            likedPosts.Remove(postId);
+        }
+        else
+        {
+            likedPosts.Add(postId);
         }
     }
 }
