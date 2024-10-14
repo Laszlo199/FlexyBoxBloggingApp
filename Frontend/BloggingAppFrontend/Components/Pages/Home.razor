@@ -115,20 +115,12 @@
     {
         if (firstRender)
         {
-            var userId = AuthService.TokenDto?.UserId;
-            if (userId is null)
-            {
-                Navigation.NavigateTo("Login");
-                return;
-            }
-
             await LoadBlogPosts();
             await LoadCategories();
             isInitialized = true;
             StateHasChanged();
         }
     }
-
 
     private async Task LoadBlogPosts()
     {
@@ -139,7 +131,7 @@
     private async Task LoadCategories()
     {
         var fetchedCategories = await CategoryService.GetAllCategories();
-        categories = fetchedCategories.ToList() ?? new List<CategoryDto>();
+        categories = fetchedCategories?.ToList() ?? new List<CategoryDto>();
     }
 
     private void SelectCategory(CategoryDto category)
@@ -159,7 +151,6 @@
     private IEnumerable<BlogPostDto> FilteredPosts()
     {
         return blogPosts?
-
             .Where(post => string.IsNullOrEmpty(searchTerm) || post.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
             .Where(post => !selectedCategories.Any() || post.Categories.Any(pc => selectedCategories.Any(sc => sc.Id == pc.Id)))
             ?? Enumerable.Empty<BlogPostDto>();

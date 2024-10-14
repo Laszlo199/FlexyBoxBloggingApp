@@ -1,13 +1,30 @@
 ﻿@using BloggingAppFrontend.Components.Shared
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
 
 <div>
     <div class="header">
         <HeaderMenu />
     </div>
-     <article class="content">
-            @Body
-        </article>
+        <main>
+            <div class="top-row px-4">
+                <AuthorizeView>
+                    <Authorized>
+                        <div>Hello!</div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div>You're not authorized.</div>
+                    </NotAuthorized>
+                </AuthorizeView>
+                <a href="login">login</a>
+            </div>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
 </div>
 
 <div id="blazor-error-ui">

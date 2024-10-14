@@ -1,7 +1,7 @@
-﻿using Blazored.LocalStorage;
-using Blazored.Toast.Services;
+﻿using Blazored.Toast.Services;
 using BloggingAppFrontend.Application.Dtos.AuthDtos;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -24,20 +24,20 @@ namespace BloggingAppFrontend.Application.Services
     {
         private HttpClient _httpClient;
         private NavigationManager _navigationManager;
-        private ILocalStorageService _localStorageService;
+        private ProtectedLocalStorage _localStorage;
         private IConfiguration _configuration;
         private IToastService _toastService;
 
         public HttpService(
             HttpClient httpClient,
             NavigationManager navigationManager,
-            ILocalStorageService localStorageService,
+            ProtectedLocalStorage localStorage,
             IConfiguration configuration,
             IToastService toastService)
         {
             _httpClient = httpClient;
             _navigationManager = navigationManager;
-            _localStorageService = localStorageService;
+            _localStorage = localStorage;
             _configuration = configuration;
             _toastService = toastService;
         }
@@ -100,7 +100,7 @@ namespace BloggingAppFrontend.Application.Services
         private async Task<T?> SendRequest<T>(HttpRequestMessage request)
         {
             // add jwt auth header if user is logged in and request is to the api url
-            var token = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
+            var token = (await _localStorage.GetAsync<TokenDto>("sessionState")).Value;
             var isApiUrl = !request.RequestUri?.IsAbsoluteUri;
             if (token != null && isApiUrl != null && isApiUrl.Value)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Jwt);
@@ -110,7 +110,7 @@ namespace BloggingAppFrontend.Application.Services
             // auto logout on 401 response
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                _navigationManager.NavigateTo("logout");
+                _navigationManager.NavigateTo("login");
                 return default!;
             }
 
@@ -134,7 +134,7 @@ namespace BloggingAppFrontend.Application.Services
         private async Task SendRequest(HttpRequestMessage request)
         {
             // add jwt auth header if user is logged in and request is to the api url
-            var token = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
+            var token = (await _localStorage.GetAsync<TokenDto>("sessionState")).Value;
             var isApiUrl = !request.RequestUri?.IsAbsoluteUri;
             if (token != null && isApiUrl != null && isApiUrl.Value)
                 request.Headers.Authorization = new AuthenticationHeaderValue(token.Jwt);

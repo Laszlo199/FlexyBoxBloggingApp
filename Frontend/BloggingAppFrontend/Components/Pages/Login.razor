@@ -38,7 +38,6 @@
 
     private async Task HandleLogin()
     {
-
         var success = await AuthService.Login(loginModel);
         if (success)
         {
