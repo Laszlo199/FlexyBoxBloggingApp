@@ -11,6 +11,7 @@ namespace BloggingAppFrontend.Application.Services
         Task<bool> Register(RegisterDto registerDto);
         Task<bool> Login(LoginDto loginDto);
         Task Logout();
+        bool IsAuthenticated();
     }
 
     public class AuthService : IAuthService
@@ -33,9 +34,6 @@ namespace BloggingAppFrontend.Application.Services
 
         public async Task Initialize()
         {
-            if (TokenDto != null)
-                return;
-
             TokenDto = await _localStorageService.GetItemAsync<TokenDto>("tokenDto");
         }
 
@@ -77,6 +75,11 @@ namespace BloggingAppFrontend.Application.Services
             TokenDto = null;
             await _localStorageService.RemoveItemAsync("tokenDto");
             _navigationManager.NavigateTo("login");
+        }
+
+        public bool IsAuthenticated()
+        {
+            return TokenDto != null && !string.IsNullOrEmpty(TokenDto.Jwt);
         }
     }
 }

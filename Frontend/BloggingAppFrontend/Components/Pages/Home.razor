@@ -2,10 +2,12 @@
 @using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
 @using BloggingAppFrontend.Application.Services
+@using Microsoft.AspNetCore.Authentication
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
+@inject IAuthService AuthService
 
 <!-- Search and Filter Section -->
 <div class="container mt-5">
@@ -113,6 +115,13 @@
     {
         if (firstRender)
         {
+            var userId = AuthService.TokenDto?.UserId;
+            if (userId is null)
+            {
+                Navigation.NavigateTo("Login");
+                return;
+            }
+
             await LoadBlogPosts();
             await LoadCategories();
             isInitialized = true;

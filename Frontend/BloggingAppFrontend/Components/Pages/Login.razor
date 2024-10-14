@@ -1,8 +1,11 @@
 ﻿@page "/login"
+@using BloggingAppFrontend.Application.Dtos.AuthDtos
+@using BloggingAppFrontend.Application.Services
 @using BloggingAppFrontend.Components.Layout
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @layout AuthLayout
+@inject IAuthService AuthService
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -12,7 +15,7 @@
                     <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <InputText id="username" class="form-control" @bind-Value="loginModel.Username" required />
+                            <InputText id="username" class="form-control" @bind-Value="loginModel.Email" required />
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
@@ -31,18 +34,16 @@
 </div>
 
 @code {
-    private LoginModel loginModel = new LoginModel();
+    private LoginDto loginModel = new LoginDto();
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
-        // Handle the login logic here (e.g., API calls, authentication)
-        Console.WriteLine($"Login attempted with Username: {loginModel.Username}");
-        Navigation.NavigateTo("/");
-    }
 
-    public class LoginModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        var success = await AuthService.Login(loginModel);
+        if (success)
+        {
+            await Task.Delay(1000);
+            Navigation.NavigateTo("/", replace: true);
+        }
     }
 }
