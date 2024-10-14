@@ -1,7 +1,10 @@
 ﻿@page "/register"
+@using BloggingAppFrontend.Application.Dtos.AuthDtos
+@using BloggingAppFrontend.Application.Services
 @using BloggingAppFrontend.Components.Layout
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject IAuthService AuthService
 @layout AuthLayout
 
 <div class="container mt-5">
@@ -26,11 +29,6 @@
                             <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" required />
                         </div>
 
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" required />
-                        </div>
-
                         <button type="submit" class="btn btn-primary w-100 mt-3">Sign up</button>
                     </EditForm>
                     <div class="mt-3 text-center">
@@ -44,18 +42,15 @@
 </div>
 
 @code {
-    private RegisterModel registerModel = new RegisterModel();
+    private RegisterDto registerModel = new RegisterDto();
 
-    private void HandleRegister()
+    private async Task HandleRegister()
     {
-        Navigation.NavigateTo("/");
-    }
+        var success = await AuthService.Register(registerModel);
 
-    public class RegisterModel
-    {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
+        if (success)
+        {
+            Navigation.NavigateTo("/");
+        }
     }
 }

@@ -77,7 +77,6 @@
                                 <!-- Display Categories with Smaller Badge Style -->
                                 <p class="text-muted">
                                     @foreach (var category in post.Categories)
-
                                     {
                                         <span class="category-badge">#@category.Name</span>
                                     }
@@ -92,7 +91,7 @@
                                 <i class="bi bi-three-dots-vertical text-muted" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                     <li><a class="dropdown-item" href="@($"/post-editor/{post.Id}")">Edit</a></li>
-                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                    <li><a class="dropdown-item" @onclick="() => DeletePost(post.Id)">Delete</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -154,5 +153,15 @@
             .Where(post => string.IsNullOrEmpty(searchTerm) || post.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
             .Where(post => !selectedCategories.Any() || post.Categories.Any(pc => selectedCategories.Any(sc => sc.Id == pc.Id)))
             ?? Enumerable.Empty<BlogPostDto>();
+    }
+
+    private async Task DeletePost(int postId)
+    {
+        var success = await BlogPostService.DeletePost(postId);
+        if (success)
+        {
+            blogPosts = blogPosts?.Where(post => post.Id != postId).ToList();
+            StateHasChanged();
+        }
     }
 }
