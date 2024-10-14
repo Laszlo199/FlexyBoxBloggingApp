@@ -9,7 +9,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    [Authorize]
     public class BlogPostController : ControllerBase
     {
         private readonly IBlogPostService _blogPostService;
