@@ -3,7 +3,9 @@
 @inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
 @inject CustomAuthStateProvider AuthStateProvider
+@inject IToastService ToastService
 @rendermode InteractiveServer
+@using Blazored.Toast.Services
 @using BloggingAppFrontend.Application.AuthGuard
 @using BloggingAppFrontend.Application.Dtos
 @using BloggingAppFrontend.Application.Dtos.BlogPsotDto
@@ -124,19 +126,16 @@
                     CategoryIds = selectedCategories.Select(c => c.Id).ToList()
                 };
                 await BlogPostService.UpdatePost(id.Value, updateBlogPostDto);
+                ToastService.ShowSuccess($"Blog Post Updated {updateBlogPostDto.Title}");
             }
             else
             {
                 blogPostDto.CategoryIds = selectedCategories.Select(c => c.Id).ToList();
+                ToastService.ShowSuccess($"Blog Post Created {blogPostDto.Title}");
                 await BlogPostService.CreatePost(blogPostDto);
             }
 
             Navigation.NavigateTo("/");
-        }
-        else
-        {
-            // Handle the case where the user is not logged in
-            Console.WriteLine("User is not logged in.");
         }
     }
 

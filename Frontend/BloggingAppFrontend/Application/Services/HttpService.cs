@@ -146,13 +146,11 @@ namespace BloggingAppFrontend.Application.Services
 
             using var response = await _httpClient.SendAsync(request);
 
-            // auto logout on 401 response
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 await ((CustomAuthStateProvider)_authStateProvider).MarkUserAsLoggedOut();
             }
 
-            // throw exception on error response
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
