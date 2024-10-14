@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -59,8 +59,48 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             AuthorId = 1,
                             Content = "This is the first post.",
-                            CreatedAt = new DateTime(2024, 10, 6, 21, 34, 30, 740, DateTimeKind.Utc).AddTicks(7785),
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8038),
                             Title = "First Post"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AuthorId = 1,
+                            Content = "This is the second post.",
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8043),
+                            Title = "Second Post"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AuthorId = 1,
+                            Content = "This is the third post.",
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8045),
+                            Title = "Third Post"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AuthorId = 1,
+                            Content = "This is the fourth post.",
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8048),
+                            Title = "Fourth Post"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AuthorId = 1,
+                            Content = "This is the fifth post.",
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8053),
+                            Title = "Fifth Post"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AuthorId = 1,
+                            Content = "This is the sixth post.",
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(8054),
+                            Title = "Sixth Post"
                         });
                 });
 
@@ -87,6 +127,56 @@ namespace Infrastructure.Migrations
                         new
                         {
                             BlogPostId = 1,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            BlogPostId = 2,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            BlogPostId = 2,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            BlogPostId = 3,
+                            CategoryId = 5
+                        },
+                        new
+                        {
+                            BlogPostId = 3,
+                            CategoryId = 6
+                        },
+                        new
+                        {
+                            BlogPostId = 4,
+                            CategoryId = 7
+                        },
+                        new
+                        {
+                            BlogPostId = 4,
+                            CategoryId = 8
+                        },
+                        new
+                        {
+                            BlogPostId = 5,
+                            CategoryId = 9
+                        },
+                        new
+                        {
+                            BlogPostId = 5,
+                            CategoryId = 10
+                        },
+                        new
+                        {
+                            BlogPostId = 6,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            BlogPostId = 6,
                             CategoryId = 2
                         });
                 });
@@ -122,6 +212,41 @@ namespace Infrastructure.Migrations
                         {
                             Id = 3,
                             Name = "Lifestyle"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Science"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Education"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Travel"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Food"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Finance"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Sports"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Entertainment"
                         });
                 });
 
@@ -138,7 +263,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
@@ -154,16 +279,19 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 10, 6, 21, 34, 30, 740, DateTimeKind.Utc).AddTicks(7744),
+                            CreatedAt = new DateTime(2024, 10, 14, 20, 48, 4, 296, DateTimeKind.Utc).AddTicks(7935),
                             Email = "user1@example.com",
-                            PasswordHash = new byte[] { 53, 156, 9, 7, 53, 155, 164, 38, 131, 86, 209, 25, 121, 130, 92, 214, 40, 15, 59, 126, 93, 70, 52, 192, 102, 160, 41, 241, 224, 53, 254, 8, 97, 31, 128, 150, 196, 23, 124, 209, 30, 220, 3, 210, 193, 252, 184, 28, 83, 82, 185, 224, 89, 96, 112, 149, 40, 203, 217, 191, 60, 224, 234, 60 },
-                            PasswordSalt = new byte[] { 93, 242, 20, 98, 49, 81, 133, 218, 82, 30, 135, 120, 40, 24, 200, 93, 127, 20, 77, 186, 73, 97, 40, 37, 190, 105, 205, 81, 39, 171, 189, 178, 58, 215, 218, 4, 209, 31, 59, 68, 158, 247, 221, 244, 252, 12, 19, 83, 122, 79, 149, 112, 164, 169, 9, 250, 104, 179, 24, 196, 8, 104, 247, 140, 246, 83, 158, 152, 217, 84, 216, 27, 103, 174, 189, 3, 218, 25, 137, 70, 2, 114, 30, 193, 38, 246, 148, 227, 22, 41, 153, 224, 91, 205, 245, 254, 250, 182, 191, 244, 216, 106, 113, 210, 10, 218, 76, 193, 3, 86, 109, 125, 219, 183, 135, 206, 10, 0, 66, 166, 115, 98, 74, 18, 209, 246, 203, 151 },
+                            PasswordHash = new byte[] { 195, 218, 249, 241, 148, 149, 224, 180, 99, 41, 128, 171, 211, 115, 52, 61, 238, 7, 157, 71, 181, 85, 242, 102, 68, 226, 12, 86, 31, 122, 239, 209, 15, 185, 235, 236, 61, 223, 223, 104, 40, 245, 158, 116, 34, 89, 107, 205, 158, 45, 37, 5, 220, 223, 154, 200, 175, 78, 161, 193, 255, 93, 23, 141 },
+                            PasswordSalt = new byte[] { 190, 72, 114, 117, 225, 148, 152, 77, 72, 83, 75, 17, 52, 188, 175, 165 },
                             Username = "User1"
                         });
                 });
